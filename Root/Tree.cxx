@@ -32,7 +32,7 @@ void HepQ::Tree::parallelize(unsigned int nslots) {
 std::vector<std::pair<unsigned long long, unsigned long long>>
 HepQ::Tree::partition() {
   ROOT::EnableThreadSafety();
-  ROOT::EnableImplicitMT();
+  // ROOT::EnableImplicitMT(m_nslots);
 
   TDirectory::TContext c;
   std::vector<std::pair<unsigned long long, unsigned long long>> parts;

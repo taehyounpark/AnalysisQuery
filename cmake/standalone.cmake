@@ -20,7 +20,8 @@ target_compile_options(
   -Wall -Wextra 
   $<$<CONFIG:Release>:-O3> 
   $<$<CONFIG:RelWithDebInfo>:-O3> 
-  $<$<CONFIG:Debug>:-O0> $<$<CONFIG:Debug>:-ggdb3> 
+  $<$<CONFIG:Debug>:-O0> 
+  $<$<CONFIG:Debug>:-ggdb3> 
 )
 
 find_package(ROOT REQUIRED COMPONENTS Core Imt RIO Net Hist Graf Graf3d Gpad ROOTVecOps Tree TreePlayer Postscript Matrix Physics MathCore Thread MultiProc ROOTDataFrame )
