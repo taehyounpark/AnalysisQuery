@@ -78,8 +78,8 @@ float DiElectronsMass(ConstDataVector<xAOD::ElectronContainer> const &els) {
   return (els[0]->p4() + els[1]->p4()).M();
 };
 
-int main(int argc, char *argv[]) {  
-  dataflow df;
+int main() {  
+  dataflow df(multithread::enable());
 
   auto ds = df.load(dataset::input<HepQ::Event>(daodFiles, treeName));
   auto eventInfo = ds.read(dataset::column<xAOD::EventInfo>("EventInfo"));
