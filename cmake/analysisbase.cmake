@@ -1,9 +1,9 @@
-project( queryosity-hep )
+project( HepQuery )
 
 find_package( ROOT REQUIRED COMPONENTS Core Imt RIO Net Hist Graf Graf3d Gpad ROOTVecOps Tree TreePlayer Postscript Matrix Physics MathCore Thread MultiProc ROOTDataFrame )
 find_package( AnalysisBase QUIET )
 
-atlas_subdir( queryosity-hep )
+atlas_subdir( HepQuery )
 
 atlas_add_root_dictionary ( HepQueryLib HepQueryDictSource
                            ROOT_HEADERS HepQuery/*.h Root/LinkDef.h
