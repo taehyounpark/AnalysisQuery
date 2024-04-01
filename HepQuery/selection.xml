@@ -5,9 +5,9 @@
 
   <class name="queryosity::dataflow" />
 
-  <class name="RDS" />
-  <class name="Event" />
-  <class name="Tree" />
-  <class name="Hist<1,float>" />
+  <class name="HepQ::RDS" />
+  <!-- <class name="HepQ::Event" /> -->
+  <class name="HepQ::Tree" />
+  <class name="HepQ::Hist<1,float>" />
    
 </lcgdict>

@@ -28,10 +28,9 @@ find_library(ROOT_TREEPLAYER_LIBRARY TreePlayer HINTS ${ROOT_LIBRARY_DIR} REQUIR
 find_library(ROOT_RDATAFRAME_LIBRARY ROOTDataFrame HINTS ${ROOT_LIBRARY_DIR} REQUIRED)
 target_link_libraries(HepQuery queryosity::queryosity ROOT::Core ROOT::RIO ROOT::Hist ROOT::Tree ROOT::TreePlayer ROOT::Imt ROOT::ROOTVecOps ROOT::ROOTDataFrame ROOT::Physics)
 
-ROOT_GENERATE_DICTIONARY(
-  HepQuery_dict ${HEPQ_HEADERS}
-  LINKDEF Root/LinkDef.h
-  MODULE HepQuery
+REFLEX_GENERATE_DICTIONARY(
+  HepQuery HepQuery/HepQueryDict.h
+  SELECTION HepQuery/selection.xml
 )
 
 export(PACKAGE HepQuery)
