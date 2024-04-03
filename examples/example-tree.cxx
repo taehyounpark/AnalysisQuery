@@ -96,54 +96,46 @@ int main() {
   auto lep_type_sel = lep_type[lep_selection];
 
   // compute (sub-)leading lepton four-momentum
-  auto l1p4 = df.define(column::definition<NthP4>(0), lep_pt_sel, lep_eta_sel,
-                        lep_phi_sel, lep_E_sel);
-  auto l2p4 = df.define(column::definition<NthP4>(1), lep_pt_sel, lep_eta_sel,
-                        lep_phi_sel, lep_E_sel);
+  auto l1p4 = df.define(column::definition<NthP4>(0))(lep_pt_sel, lep_eta_sel,
+                                                      lep_phi_sel, lep_E_sel);
+  auto l2p4 = df.define(column::definition<NthP4>(1))(lep_pt_sel, lep_eta_sel,
+                                                      lep_phi_sel, lep_E_sel);
 
   // compute dilepton invariant mass & higgs transverse momentum
   auto llp4 = l1p4 + l2p4;
   auto mll =
-      df.define(column::expression([](const P4 &p4) { return p4.M(); }), llp4);
+      df.define(column::expression([](const P4 &p4) { return p4.M(); }))(llp4);
   auto higgs_pt =
       df.define(column::expression([](const P4 &p4, float q, float q_phi) {
-                  TVector2 p2;
-                  p2.SetMagPhi(p4.Pt(), p4.Phi());
-                  TVector2 q2;
-                  q2.SetMagPhi(q, q_phi);
-                  return (p2 + q2).Mod();
-                }),
-                llp4, met, met_phi);
+        TVector2 p2;
+        p2.SetMagPhi(p4.Pt(), p4.Phi());
+        TVector2 q2;
+        q2.SetMagPhi(q, q_phi);
+        return (p2 + q2).Mod();
+      }))(llp4, met, met_phi);
 
   // compute number of leptons
   auto nlep_req = df.define(column::constant<unsigned int>(2));
-  auto nlep_sel =
-      df.define(column::expression([](VecD const &lep) { return lep.size(); }),
-                lep_pt_sel);
+  auto nlep_sel = df.define(column::expression(
+      [](VecD const &lep) { return lep.size(); }))(lep_pt_sel);
 
   // apply MC event weight * electron & muon scale factors
   auto weighted = df.weight(mc_weight * el_sf * mu_sf);
 
   // require 2 opoosite-signed leptons
   auto cut_2l = weighted.filter(nlep_sel == nlep_req);
-  auto cut_2los =
-      cut_2l.filter(column::expression([](const VecF &lep_charge) {
-                      return lep_charge[0] + lep_charge[1] == 0;
-                    }),
-                    lep_Q_sel);
+  auto cut_2los = cut_2l.filter(column::expression([](const VecF &lep_charge) {
+    return lep_charge[0] + lep_charge[1] == 0;
+  }))(lep_Q_sel);
 
   // branch out into differet/same-flavour channels
-  auto cut_2ldf =
-      cut_2los.filter(column::expression([](const VecI &lep_type) {
-                        return lep_type[0] + lep_type[1] == 24;
-                      }),
-                      lep_type_sel);
-  auto cut_2lsf =
-      cut_2los.filter(column::expression([](const VecI &lep_type) {
-                        return (lep_type[0] + lep_type[1] == 22) ||
-                               (lep_type[0] + lep_type[1] == 26);
-                      }),
-                      lep_type_sel);
+  auto cut_2ldf = cut_2los.filter(column::expression([](const VecI &lep_type) {
+    return lep_type[0] + lep_type[1] == 24;
+  }))(lep_type_sel);
+  auto cut_2lsf = cut_2los.filter(column::expression([](const VecI &lep_type) {
+    return (lep_type[0] + lep_type[1] == 22) ||
+           (lep_type[0] + lep_type[1] == 26);
+  }))(lep_type_sel);
 
   // apply (different) cuts for each channel
   auto mll_min_df = df.define(column::constant(10.0));
@@ -159,9 +151,9 @@ int main() {
 
   // make histograms
   auto [pth_2los_presel, pth_2ldf_presel, pth_2lsf_presel] =
-      df.make(query::plan<HepQ::Hist<1, float>>("pth", 30, 0, 150))
+      df.get(query::output<HepQ::Hist<1, float>>("pth", 30, 0, 150))
           .fill(higgs_pt)
-          .book(cut_2los_presel, cut_2ldf_presel, cut_2lsf_presel);
+          .at(cut_2los_presel, cut_2ldf_presel, cut_2lsf_presel);
 
   // plot results
   Double_t w = 1600;

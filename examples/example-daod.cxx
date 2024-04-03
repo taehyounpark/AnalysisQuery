@@ -1,8 +1,8 @@
 #include "HepQuery/Event.h"
 #include "HepQuery/Hist.h"
 
-#include <xAODEventInfo/EventInfo.h>
 #include <xAODEgamma/ElectronContainer.h>
+#include <xAODEventInfo/EventInfo.h>
 
 using VecF = ROOT::RVec<float>;
 using VecD = ROOT::RVec<double>;
@@ -16,9 +16,9 @@ namespace column = queryosity::column;
 namespace query = queryosity::query;
 namespace systematic = queryosity::systematic;
 
+#include "TCanvas.h"
 #include "TH1F.h"
 #include "TPad.h"
-#include "TCanvas.h"
 #include <ROOT/RVec.hxx>
 
 #include <chrono>
@@ -27,17 +27,36 @@ namespace systematic = queryosity::systematic;
 #include <sstream>
 
 std::vector<std::string> daodFiles{
-"/project/6001378/thpark/public/mc23_13p6TeV.601189.PhPy8EG_AZNLO_Zee.deriv.DAOD_PHYS.e8514_s4162_r14622_p5855/DAOD_PHYS.35010014._000001.pool.root.1",
-"/project/6001378/thpark/public/mc23_13p6TeV.601189.PhPy8EG_AZNLO_Zee.deriv.DAOD_PHYS.e8514_s4162_r14622_p5855/DAOD_PHYS.35010014._000002.pool.root.1",
-"/project/6001378/thpark/public/mc23_13p6TeV.601189.PhPy8EG_AZNLO_Zee.deriv.DAOD_PHYS.e8514_s4162_r14622_p5855/DAOD_PHYS.35010014._000003.pool.root.1",
-"/project/6001378/thpark/public/mc23_13p6TeV.601189.PhPy8EG_AZNLO_Zee.deriv.DAOD_PHYS.e8514_s4162_r14622_p5855/DAOD_PHYS.35010014._000004.pool.root.1",
-"/project/6001378/thpark/public/mc23_13p6TeV.601189.PhPy8EG_AZNLO_Zee.deriv.DAOD_PHYS.e8514_s4162_r14622_p5855/DAOD_PHYS.35010014._000005.pool.root.1",
-"/project/6001378/thpark/public/mc23_13p6TeV.601189.PhPy8EG_AZNLO_Zee.deriv.DAOD_PHYS.e8514_s4162_r14622_p5855/DAOD_PHYS.35010014._000006.pool.root.1",
-"/project/6001378/thpark/public/mc23_13p6TeV.601189.PhPy8EG_AZNLO_Zee.deriv.DAOD_PHYS.e8514_s4162_r14622_p5855/DAOD_PHYS.35010014._000007.pool.root.1",
-"/project/6001378/thpark/public/mc23_13p6TeV.601189.PhPy8EG_AZNLO_Zee.deriv.DAOD_PHYS.e8514_s4162_r14622_p5855/DAOD_PHYS.35010014._000008.pool.root.1",
-"/project/6001378/thpark/public/mc23_13p6TeV.601189.PhPy8EG_AZNLO_Zee.deriv.DAOD_PHYS.e8514_s4162_r14622_p5855/DAOD_PHYS.35010014._000009.pool.root.1",
-"/project/6001378/thpark/public/mc23_13p6TeV.601189.PhPy8EG_AZNLO_Zee.deriv.DAOD_PHYS.e8514_s4162_r14622_p5855/DAOD_PHYS.35010014._000010.pool.root.1"
-};
+    "/project/6001378/thpark/public/"
+    "mc23_13p6TeV.601189.PhPy8EG_AZNLO_Zee.deriv.DAOD_PHYS.e8514_s4162_r14622_"
+    "p5855/DAOD_PHYS.35010014._000001.pool.root.1",
+    "/project/6001378/thpark/public/"
+    "mc23_13p6TeV.601189.PhPy8EG_AZNLO_Zee.deriv.DAOD_PHYS.e8514_s4162_r14622_"
+    "p5855/DAOD_PHYS.35010014._000002.pool.root.1",
+    "/project/6001378/thpark/public/"
+    "mc23_13p6TeV.601189.PhPy8EG_AZNLO_Zee.deriv.DAOD_PHYS.e8514_s4162_r14622_"
+    "p5855/DAOD_PHYS.35010014._000003.pool.root.1",
+    "/project/6001378/thpark/public/"
+    "mc23_13p6TeV.601189.PhPy8EG_AZNLO_Zee.deriv.DAOD_PHYS.e8514_s4162_r14622_"
+    "p5855/DAOD_PHYS.35010014._000004.pool.root.1",
+    "/project/6001378/thpark/public/"
+    "mc23_13p6TeV.601189.PhPy8EG_AZNLO_Zee.deriv.DAOD_PHYS.e8514_s4162_r14622_"
+    "p5855/DAOD_PHYS.35010014._000005.pool.root.1",
+    "/project/6001378/thpark/public/"
+    "mc23_13p6TeV.601189.PhPy8EG_AZNLO_Zee.deriv.DAOD_PHYS.e8514_s4162_r14622_"
+    "p5855/DAOD_PHYS.35010014._000006.pool.root.1",
+    "/project/6001378/thpark/public/"
+    "mc23_13p6TeV.601189.PhPy8EG_AZNLO_Zee.deriv.DAOD_PHYS.e8514_s4162_r14622_"
+    "p5855/DAOD_PHYS.35010014._000007.pool.root.1",
+    "/project/6001378/thpark/public/"
+    "mc23_13p6TeV.601189.PhPy8EG_AZNLO_Zee.deriv.DAOD_PHYS.e8514_s4162_r14622_"
+    "p5855/DAOD_PHYS.35010014._000008.pool.root.1",
+    "/project/6001378/thpark/public/"
+    "mc23_13p6TeV.601189.PhPy8EG_AZNLO_Zee.deriv.DAOD_PHYS.e8514_s4162_r14622_"
+    "p5855/DAOD_PHYS.35010014._000009.pool.root.1",
+    "/project/6001378/thpark/public/"
+    "mc23_13p6TeV.601189.PhPy8EG_AZNLO_Zee.deriv.DAOD_PHYS.e8514_s4162_r14622_"
+    "p5855/DAOD_PHYS.35010014._000010.pool.root.1"};
 std::string treeName = "CollectionTree";
 
 float EventWeight(const xAOD::EventInfo &eventInfo) {
@@ -51,10 +70,9 @@ public:
   ElectronSelection(double pT_min, double eta_max)
       : m_pT_min(pT_min), m_eta_max(eta_max) {}
   virtual ~ElectronSelection() = default;
-  virtual ConstDataVector<xAOD::ElectronContainer> evaluate(
-      column::observable<xAOD::ElectronContainer> els) const override {
-    ConstDataVector<xAOD::ElectronContainer> els_sel(
-        SG::VIEW_ELEMENTS);
+  virtual ConstDataVector<xAOD::ElectronContainer>
+  evaluate(column::observable<xAOD::ElectronContainer> els) const override {
+    ConstDataVector<xAOD::ElectronContainer> els_sel(SG::VIEW_ELEMENTS);
     for (const xAOD::Electron *el : *els) {
       if (el->pt() < m_pT_min)
         continue;
@@ -87,21 +105,21 @@ int main() {
       ds.read(dataset::column<xAOD::ElectronContainer>("Electrons"));
 
   auto selectedElectrons =
-      df.define(column::definition<ElectronSelection>(10.0,1.5), allElectrons);
+      df.define(column::definition<ElectronSelection>(10.0, 1.5))(allElectrons);
   auto diElectronsMassMeV =
-      df.define(column::expression(DiElectronsMass), selectedElectrons);
+      df.define(column::expression(DiElectronsMass))(selectedElectrons);
   auto toGeV = df.define(column::constant(1.0 / 1000.0));
   auto diElectronsMassGeV = diElectronsMassMeV * toGeV;
 
-  auto eventWeight = df.define(column::expression(EventWeight), eventInfo);
+  auto eventWeight = df.define(column::expression(EventWeight))(eventInfo);
   auto atLeastTwoSelectedElectrons =
       df.weight(eventWeight)
-          .filter(column::expression(TwoElectrons), selectedElectrons);
+          .filter(column::expression(TwoElectrons))(selectedElectrons);
 
   auto selectedElectronsPtHist =
-      df.make(query::plan<HepQ::Hist<1,float>>("diElectronMass", 100, 0, 500))
+      df.get(query::plan<HepQ::Hist<1, float>>("diElectronMass", 100, 0, 500))
           .fill(diElectronsMassGeV)
-          .book(atLeastTwoSelectedElectrons);
+          .at(atLeastTwoSelectedElectrons);
 
   selectedElectronsPtHist->Draw();
   gPad->SetLogy();
