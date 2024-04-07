@@ -1,8 +1,19 @@
 import ROOT
-from ROOT import qty
+from ROOT import queryosity as qty
 import cppyy
 
+# trigger queryosity to be loaded
 df = qty.dataflow()
+cppyy.cppdef('''
+using dataflow = qty::dataflow;
+namespace multithread = qty::multithread;
+namespace dataset = qty::dataset;
+namespace column = qty::column;
+namespace selection = qty::selection;
+namespace query = qty::query;
+namespace systematic = qty::systematic;
+'''
+)
 
 class LazyNode():
   def __init__(self, action):
