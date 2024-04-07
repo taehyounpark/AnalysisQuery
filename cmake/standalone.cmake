@@ -29,9 +29,10 @@ find_library(ROOT_TREEPLAYER_LIBRARY TreePlayer HINTS ${ROOT_LIBRARY_DIR} REQUIR
 find_library(ROOT_RDATAFRAME_LIBRARY ROOTDataFrame HINTS ${ROOT_LIBRARY_DIR} REQUIRED)
 target_link_libraries(HepQuery queryosity::queryosity ROOT::Core ROOT::RIO ROOT::Hist ROOT::Tree ROOT::TreePlayer ROOT::Imt ROOT::ROOTVecOps ROOT::ROOTDataFrame ROOT::Physics)
 
-REFLEX_GENERATE_DICTIONARY(
-  HepQuery HepQuery/HepQueryDict.h
-  SELECTION HepQuery/selection.xml
+ROOT_GENERATE_DICTIONARY(
+  HepQueryDict ${HEPQ_HEADERS}
+  LINKDEF Root/LinkDef.h
+  MODULE HepQuery
 )
 
 export(PACKAGE HepQuery)
@@ -59,6 +60,5 @@ set(SETUP ${CMAKE_CURRENT_BINARY_DIR}/setup.sh)
 file(WRITE ${SETUP} "#!/bin/bash\n")
 file(APPEND ${SETUP} "ulimit -S -s unlimited\n" )
 file(APPEND ${SETUP} "export LD_LIBRARY_PATH=\${LD_LIBRARY_PATH}:${HEPQ_LD_LIBRARY_PATH}\n")
-file(APPEND ${SETUP} "export DYLD_LIBRARY_PATH=\${LD_LIBRARY_PATH}:${HEPQ_LD_LIBRARY_PATH}\n")
 file(APPEND ${SETUP} "export DYLD_LIBRARY_PATH=\${LD_LIBRARY_PATH}:${HEPQ_LD_LIBRARY_PATH}\n")
 
