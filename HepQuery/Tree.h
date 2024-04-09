@@ -34,19 +34,19 @@ public:
        const std::string &treeName);
   ~Tree() = default;
 
-  virtual void parallelize(unsigned int nslots) override;
+  virtual void parallelize(unsigned int nslots) final override;
 
   virtual std::vector<std::pair<unsigned long long, unsigned long long>>
-  partition() override;
+  partition() final override;
 
   template <typename U>
   std::unique_ptr<Branch<U>> read(unsigned int slot,
                                   const std::string &branchName);
 
   virtual void initialize(unsigned int slot, unsigned long long begin,
-                          unsigned long long end) override;
-  virtual void execute(unsigned int slot, unsigned long long entry) override;
-  virtual void finalize(unsigned int slot) override;
+                          unsigned long long end) final override;
+  virtual void execute(unsigned int slot, unsigned long long entry) final override;
+  virtual void finalize(unsigned int slot) final override;
   using queryosity::dataset::source::initialize;
   using queryosity::dataset::source::finalize;
 
@@ -69,7 +69,7 @@ public:
   }
   ~Branch() = default;
 
-  virtual T const &read(unsigned int, unsigned long long) const override {
+  virtual T const &read(unsigned int, unsigned long long) const final override {
     return **m_treeReaderValue;
   }
 
@@ -91,10 +91,10 @@ public:
   ~Branch() = default;
 
   virtual void initialize(unsigned int, unsigned long long,
-                          unsigned long long) override {}
+                          unsigned long long) final override {}
 
   virtual ROOT::RVec<T> const &read(unsigned int,
-                                    unsigned long long) const override {
+                                    unsigned long long) const final override {
     if (auto arraySize = m_treeReaderArray->GetSize()) {
       ROOT::RVec<T> readArray(&m_treeReaderArray->At(0), arraySize);
       std::swap(m_readArray, readArray);
@@ -124,7 +124,7 @@ public:
   ~Branch() = default;
 
   virtual ROOT::RVec<bool> const &read(unsigned int,
-                                       unsigned long long) const override {
+                                       unsigned long long) const final override {
     if (m_treeReaderArray->GetSize()) {
       ROOT::RVec<bool> readArray(m_treeReaderArray->begin(),
                                  m_treeReaderArray->end());
@@ -158,10 +158,10 @@ public:
   virtual ~Snapshot() = default;
 
   virtual void fill(queryosity::column::observable<ColumnTypes>...,
-                    double) override;
-  virtual std::shared_ptr<TTree> result() const override;
+                    double) final override;
+  virtual std::shared_ptr<TTree> result() const final override;
   virtual std::shared_ptr<TTree>
-  merge(std::vector<std::shared_ptr<TTree>> const &results) const override;
+  merge(std::vector<std::shared_ptr<TTree>> const &results) const final override;
 
 private:
   // helper function to make branch of i-th data type with i-th column name

@@ -24,10 +24,10 @@ public:
   Hist(const std::string &, const std::vector<double> &);
   virtual ~Hist() = default;
 
-  virtual void fill(queryosity::column::observable<Prec>, double) override;
-  virtual std::shared_ptr<TH1> result() const override;
+  virtual void fill(queryosity::column::observable<Prec>, double) final override;
+  virtual std::shared_ptr<TH1> result() const final override;
   virtual std::shared_ptr<TH1>
-  merge(std::vector<std::shared_ptr<TH1>> const &results) const override;
+  merge(std::vector<std::shared_ptr<TH1>> const &results) const final override;
 
 protected:
   // histogram
@@ -44,10 +44,10 @@ public:
   virtual ~Hist() = default;
 
   virtual void fill(queryosity::column::observable<Prec>,
-                    queryosity::column::observable<Prec>, double) override;
-  virtual std::shared_ptr<TH2> result() const override;
+                    queryosity::column::observable<Prec>, double) final override;
+  virtual std::shared_ptr<TH2> result() const final override;
   virtual std::shared_ptr<TH2>
-  merge(std::vector<std::shared_ptr<TH2>> const &results) const override;
+  merge(std::vector<std::shared_ptr<TH2>> const &results) const final override;
 
 protected:
   std::shared_ptr<TH2> m_hist; //!
@@ -64,10 +64,10 @@ public:
 
   virtual void fill(queryosity::column::observable<Prec>,
                     queryosity::column::observable<Prec>,
-                    queryosity::column::observable<Prec>, double) override;
-  virtual std::shared_ptr<TH3> result() const override;
+                    queryosity::column::observable<Prec>, double) final override;
+  virtual std::shared_ptr<TH3> result() const final override;
   virtual std::shared_ptr<TH3>
-  merge(std::vector<std::shared_ptr<TH3>> const &results) const override;
+  merge(std::vector<std::shared_ptr<TH3>> const &results) const final override;
 
 protected:
   std::shared_ptr<TH3> m_hist; //!
@@ -84,10 +84,10 @@ public:
   virtual ~Hist() = default;
 
   virtual void fill(queryosity::column::observable<ROOT::RVec<Prec>>,
-                    double) override;
-  virtual std::shared_ptr<TH1> result() const override;
+                    double) final override;
+  virtual std::shared_ptr<TH1> result() const final override;
   virtual std::shared_ptr<TH1>
-  merge(std::vector<std::shared_ptr<TH1>> const &results) const override;
+  merge(std::vector<std::shared_ptr<TH1>> const &results) const final override;
 
 protected:
   // histogram
@@ -106,10 +106,10 @@ public:
 
   virtual void fill(queryosity::column::observable<ROOT::RVec<Prec>>,
                     queryosity::column::observable<ROOT::RVec<Prec>>,
-                    double) override;
-  virtual std::shared_ptr<TH2> result() const override;
+                    double) final override;
+  virtual std::shared_ptr<TH2> result() const final override;
   virtual std::shared_ptr<TH2>
-  merge(std::vector<std::shared_ptr<TH2>> const &results) const override;
+  merge(std::vector<std::shared_ptr<TH2>> const &results) const final override;
 
 protected:
   // histogram
@@ -129,10 +129,10 @@ public:
   virtual void fill(queryosity::column::observable<ROOT::RVec<Prec>>,
                     queryosity::column::observable<ROOT::RVec<Prec>>,
                     queryosity::column::observable<ROOT::RVec<Prec>>,
-                    double) override;
-  virtual std::shared_ptr<TH3> result() const override;
+                    double) final override;
+  virtual std::shared_ptr<TH3> result() const final override;
   virtual std::shared_ptr<TH3>
-  merge(std::vector<std::shared_ptr<TH3>> const &results) const override;
+  merge(std::vector<std::shared_ptr<TH3>> const &results) const final override;
 
 protected:
   // histogram
