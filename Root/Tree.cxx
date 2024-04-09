@@ -39,7 +39,7 @@ HepQ::Tree::partition() {
 
   // offset to account for global entry position
   long long offset = 0ll;
-  for (const auto &filePath : m_inputFiles) {
+  for (auto const &filePath : m_inputFiles) {
     // check file
     std::unique_ptr<TFile> file(TFile::Open(filePath.c_str()));
     if (!file) {

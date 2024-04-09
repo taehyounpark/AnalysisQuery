@@ -36,7 +36,7 @@ std::vector<std::pair<unsigned long long, unsigned long long>> HepQ::Event::part
   
   // check all files for tree clusters
   long long offset = 0;
-  for (const auto &filePath : m_inputFiles) {
+  for (auto const &filePath : m_inputFiles) {
 
     // check file
     auto file = std::unique_ptr<TFile>(TFile::Open(filePath.c_str()));
