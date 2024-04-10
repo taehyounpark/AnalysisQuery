@@ -29,13 +29,13 @@ public:
         const std::string &metadata = "MetaData");
   ~Event() = default;
 
-  virtual void parallelize(unsigned int) override;
+  virtual void parallelize(unsigned int) final override;
   virtual std::vector<std::pair<unsigned long long, unsigned long long>>
-  partition() override;
+  partition() final override;
   virtual void initialize(unsigned int, unsigned long long,
-                          unsigned long long) override;
-  virtual void execute(unsigned int, unsigned long long) override;
-  virtual void finalize(unsigned int) override;
+                          unsigned long long) final override;
+  virtual void execute(unsigned int, unsigned long long) final override;
+  virtual void finalize(unsigned int) final override;
   using queryosity::dataset::source::finalize;
   using queryosity::dataset::source::initialize;
 
@@ -61,7 +61,7 @@ public:
       : m_containerName(containerName), m_event(&event) {}
   ~Container() = default;
 
-  virtual T const &read(unsigned int, unsigned long long) const override {
+  virtual T const &read(unsigned int, unsigned long long) const final override {
     T const *container(nullptr);
     if (m_event->retrieve(container, this->m_containerName.c_str())
             .isFailure()) {

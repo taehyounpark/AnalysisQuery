@@ -24,20 +24,20 @@ public:
   RDS(std::unique_ptr<RDataSource> rds);
   ~RDS() = default;
 
-  virtual void parallelize(unsigned int) override;
+  virtual void parallelize(unsigned int) final override;
 
   virtual std::vector<std::pair<unsigned long long, unsigned long long>>
-  partition() override;
+  partition() final override;
 
   template <typename T>
   std::unique_ptr<Column<T>> read(unsigned int, const std::string &);
 
-  virtual void initialize() override;
+  virtual void initialize() final override;
   virtual void initialize(unsigned int slot, unsigned long long begin,
-                          unsigned long long end) override;
-  virtual void execute(unsigned int slot, unsigned long long entry) override;
-  virtual void finalize(unsigned int slot) override;
-  virtual void finalize() override;
+                          unsigned long long end) final override;
+  virtual void execute(unsigned int slot, unsigned long long entry) final override;
+  virtual void finalize(unsigned int slot) final override;
+  virtual void finalize() final override;
 
 protected:
   std::unique_ptr<RDataSource> m_rds;
@@ -49,7 +49,7 @@ public:
   Column(T **cursor) : m_cursor(cursor) {}
   ~Column() = default;
 
-  virtual const T &read(unsigned int, unsigned long long) const override {
+  virtual const T &read(unsigned int, unsigned long long) const final override {
     return static_cast<const T &>(**m_cursor);
   }
 
