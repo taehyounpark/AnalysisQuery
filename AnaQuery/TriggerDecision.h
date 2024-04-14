@@ -17,6 +17,8 @@
 
 #include "queryosity.h"
 
+namespace AnaQ {
+
 class TriggerDecision : public EventDecision<bool> {
 
 public:
@@ -26,7 +28,9 @@ public:
   bool evaluate(qty::column::observable<xAOD::EventInfo> evntInfo) const override;
 
 protected:
-  asg::AnaToolHandle<TrigConf::ITrigConfigTool> m_trigConfTool_handle{"TrigConf::xAODConfigTool/xAODConfigTool",nullptr}; //!
+  asg::AnaToolHandle<TrigConf::ITrigConfigTool> m_trigConfTool_handle{"TrigConf::xAODConfigTool/xAODConfigTool" /*, this*/}; //!
   asg::AnaToolHandle<Trig::TrigDecisionTool>    m_trigDecTool_handle{"Trig::TrigDecisionTool/TrigDecisionTool"}; //!
 
 };
+
+}

@@ -20,6 +20,8 @@
 
 #include "queryosity.h"
 
+namespace AnaQ {
+
 template <typename Cont> using SystematicMap = std::unordered_map<std::string,Cont>;
 
 template <typename Dec>
@@ -34,8 +36,10 @@ namespace EventHelpers {
 
 }
 
+}
+
 template <typename Cont>
-ConstDataVector<Cont> EventHelpers::makeConstDataVector(Cont* cont) {
+ConstDataVector<Cont> AnaQ::EventHelpers::makeConstDataVector(Cont* cont) {
   auto cdv = ConstDataVector<Cont>(SG::VIEW_ELEMENTS);
   cdv.reserve( cont->size() );
   for (auto itr : *(cont)) { cdv.push_back(itr); }

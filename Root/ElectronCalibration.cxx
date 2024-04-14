@@ -48,7 +48,7 @@ void AnaQ::ElectronCalibration::initialize(unsigned int, unsigned long long ,uns
   m_IsolationCorrectionTool->initialize();
 }
 
-SystematicMap<ConstDataVector<xAOD::ElectronContainer>> AnaQ::ElectronCalibration::evaluate(qty::column::observable<xAOD::ElectronContainer> elCont) const {
+AnaQ::SystematicMap<ConstDataVector<xAOD::ElectronContainer>> AnaQ::ElectronCalibration::evaluate(qty::column::observable<xAOD::ElectronContainer> elCont) const {
   SystematicMap<ConstDataVector<xAOD::ElectronContainer>> systElecContCDV;
 
   for ( const auto& syst_it : m_systList ) {
