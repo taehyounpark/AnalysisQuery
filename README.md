@@ -1,4 +1,4 @@
-# HepQuery
+# AnaQuery
 
 ## Features
 

@@ -1,5 +1,5 @@
-#include "HepQuery/Hist.h"
-#include "HepQuery/Tree.h"
+#include "AnaQuery/Hist.h"
+#include "AnaQuery/Tree.h"
 
 #include "queryosity.h"
 

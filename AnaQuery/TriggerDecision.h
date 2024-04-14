@@ -1,6 +1,6 @@
 #pragma once
 
-#include "HepQuery/EventHelpers.h"
+#include "AnaQuery/EventHelpers.h"
 
 #include "AsgTools/AnaToolHandle.h"
 

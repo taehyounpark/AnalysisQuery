@@ -1,6 +1,6 @@
 #pragma once
 
-#include "HepQuery/ObjectCalibration.h"
+#include "AnaQuery/ObjectCalibration.h"
 
 // external tools include(s):
 #include "ElectronPhotonFourMomentumCorrection/EgammaCalibrationAndSmearingTool.h"

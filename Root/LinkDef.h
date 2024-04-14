@@ -1,8 +1,8 @@
-#include "HepQuery/RDS.h"
-#include "HepQuery/Tree.h"
-#include "HepQuery/Hist.h"
+#include "AnaQuery/RDS.h"
+#include "AnaQuery/Tree.h"
+#include "AnaQuery/Hist.h"
 
-#include "HepQuery/ElectronCalibration.h"
+#include "AnaQuery/ElectronCalibration.h"
 
 #include "queryosity.h"
 

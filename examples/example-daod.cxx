@@ -1,5 +1,5 @@
-#include "HepQuery/Event.h"
-#include "HepQuery/Hist.h"
+#include "AnaQuery/Event.h"
+#include "AnaQuery/Hist.h"
 
 #include <xAODEgamma/ElectronContainer.h>
 #include <xAODEventInfo/EventInfo.h>

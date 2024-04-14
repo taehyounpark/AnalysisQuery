@@ -141,7 +141,7 @@ protected:
 
 }
 
-#include "HepQuery/HistHelpers.h"
+#include "AnaQuery/HistHelpers.h"
 
 template <typename Prec>
 HepQ::Hist<1, Prec>::Hist(const std::string &name, unsigned int nbins, double xmin,
