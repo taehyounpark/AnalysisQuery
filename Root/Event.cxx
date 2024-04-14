@@ -6,12 +6,12 @@
 #include "xAODCutFlow/CutBookkeeperAuxContainer.h"
 #include "xAODCutFlow/CutBookkeeperContainer.h"
 
-HepQ::Event::Event(const std::vector<std::string> &inputFiles,
+AnaQ::Event::Event(const std::vector<std::string> &inputFiles,
              const std::string &collection, const std::string &metadata)
     : m_inputFiles(inputFiles), m_treeName(collection), m_metaName(metadata) {
 }
 
-void HepQ::Event::parallelize(unsigned int nslots) {
+void AnaQ::Event::parallelize(unsigned int nslots) {
   ROOT::EnableThreadSafety();
   xAOD::Init().ignore();
   m_event_per_slot.resize(nslots);
@@ -29,7 +29,7 @@ void HepQ::Event::parallelize(unsigned int nslots) {
   }
 }
 
-std::vector<std::pair<unsigned long long, unsigned long long>> HepQ::Event::partition() {
+std::vector<std::pair<unsigned long long, unsigned long long>> AnaQ::Event::partition() {
   TDirectory::TContext c;
 
   std::vector<std::pair<unsigned long long, unsigned long long>> parts;
@@ -65,16 +65,16 @@ std::vector<std::pair<unsigned long long, unsigned long long>> HepQ::Event::part
   return parts;
 }
 
-void HepQ::Event::initialize(unsigned int, unsigned long long, unsigned long long) {
+void AnaQ::Event::initialize(unsigned int, unsigned long long, unsigned long long) {
   // nothing to do
 }
 
-void HepQ::Event::execute(unsigned int slot, unsigned long long entry) {
+void AnaQ::Event::execute(unsigned int slot, unsigned long long entry) {
   if (m_event_per_slot[slot]->getEntry(entry) < 0) {
     throw std::runtime_error("failed to get entry");
   }
 }
 
-void HepQ::Event::finalize(unsigned int) {
+void AnaQ::Event::finalize(unsigned int) {
   // nothing to do
 }

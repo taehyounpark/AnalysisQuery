@@ -4,7 +4,7 @@
 
 Implemenation of `queryosity` ADL for ROOT datasets.
 
-- `HepQ::Tree`: `TTree`.
-- `HepQ::Event`: ATLAS `xAOD::TEvent` EDM.
-- `HepQ::Hist<N,Prec>`: N-dimensional histogram.
-- `HepQ::Tree::Snapshot<Columns...>`: `TTree` output.
+- `AnaQ::Tree`: `TTree`.
+- `AnaQ::Event`: ATLAS `xAOD::TEvent` EDM.
+- `AnaQ::Hist<N,Prec>`: N-dimensional histogram.
+- `AnaQ::Tree::Snapshot<Columns...>`: `TTree` output.

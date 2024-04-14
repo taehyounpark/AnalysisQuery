@@ -16,7 +16,7 @@
 
 #include "queryosity.h"
 
-namespace HepQ {
+namespace AnaQ {
 
 class Event : public queryosity::dataset::reader<Event> {
 
@@ -51,10 +51,10 @@ protected:
   std::vector<std::unique_ptr<xAOD::TEvent>> m_event_per_slot;
 };
 
-} // namespace HepQ
+} // namespace AnaQ
 
 template <typename T>
-class HepQ::Event::Container : public queryosity::column::reader<T> {
+class AnaQ::Event::Container : public queryosity::column::reader<T> {
 
 public:
   Container(const std::string &containerName, xAOD::TEvent &event)
@@ -77,7 +77,7 @@ protected:
 };
 
 template <typename U>
-std::unique_ptr<HepQ::Event::Container<U>>
-HepQ::Event::read(unsigned int slot, const std::string &containerName) const {
+std::unique_ptr<AnaQ::Event::Container<U>>
+AnaQ::Event::read(unsigned int slot, const std::string &containerName) const {
   return std::make_unique<Container<U>>(containerName, *m_event_per_slot[slot]);
 }

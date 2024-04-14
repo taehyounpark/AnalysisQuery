@@ -6,9 +6,9 @@
 #include <EventLoop/StatusCode.h>
 #include <EventLoop/Worker.h>
 
-HepQ::ElectronCalibration::ElectronCalibration(ElectronCalibration::Config cfg) : m_cfg(cfg) {}
+AnaQ::ElectronCalibration::ElectronCalibration(ElectronCalibration::Config cfg) : m_cfg(cfg) {}
 
-void HepQ::ElectronCalibration::initialize(unsigned int, unsigned long long ,unsigned long long) {
+void AnaQ::ElectronCalibration::initialize(unsigned int, unsigned long long ,unsigned long long) {
   m_outAuxContainerName     = m_cfg.outContainerName + "Aux."; // the period is very important!
   m_outSCContainerName      = m_cfg.outContainerName + "ShallowCopy";
   m_outSCAuxContainerName   = m_outSCContainerName + "Aux."; // the period is very important!
@@ -48,7 +48,7 @@ void HepQ::ElectronCalibration::initialize(unsigned int, unsigned long long ,uns
   m_IsolationCorrectionTool->initialize();
 }
 
-SystematicMap<ConstDataVector<xAOD::ElectronContainer>> HepQ::ElectronCalibration::evaluate(qty::column::observable<xAOD::ElectronContainer> elCont) const {
+SystematicMap<ConstDataVector<xAOD::ElectronContainer>> AnaQ::ElectronCalibration::evaluate(qty::column::observable<xAOD::ElectronContainer> elCont) const {
   SystematicMap<ConstDataVector<xAOD::ElectronContainer>> systElecContCDV;
 
   for ( const auto& syst_it : m_systList ) {
@@ -96,6 +96,6 @@ SystematicMap<ConstDataVector<xAOD::ElectronContainer>> HepQ::ElectronCalibratio
   return systElecContCDV;
 }
 
-void HepQ::ElectronCalibration::finalize(unsigned int) {
+void AnaQ::ElectronCalibration::finalize(unsigned int) {
   this->m_shallowCopies.clear();
 }

@@ -10,7 +10,7 @@
 
 #include "queryosity.h"
 
-namespace HepQ {
+namespace AnaQ {
 
 class RDS : public queryosity::dataset::reader<RDS> {
 
@@ -60,7 +60,7 @@ protected:
 }
 
 template <typename T>
-std::unique_ptr<HepQ::RDS::Column<T>> HepQ::RDS::read(unsigned int slot,
+std::unique_ptr<AnaQ::RDS::Column<T>> AnaQ::RDS::read(unsigned int slot,
                                           const std::string &name) {
   auto columnReaders = m_rds->GetColumnReaders<T>(name.c_str());
   return std::make_unique<Column<T>>(columnReaders[slot]);

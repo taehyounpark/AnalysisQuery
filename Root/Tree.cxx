@@ -5,15 +5,15 @@
 #include "TTreeReaderArray.h"
 #include "TTreeReaderValue.h"
 
-HepQ::Tree::Tree(const std::vector<std::string> &inputFiles,
+AnaQ::Tree::Tree(const std::vector<std::string> &inputFiles,
            const std::string &treeName)
     : m_inputFiles(inputFiles), m_treeName(treeName) {}
 
-HepQ::Tree::Tree(std::initializer_list<std::string> inputFiles,
+AnaQ::Tree::Tree(std::initializer_list<std::string> inputFiles,
            const std::string &treeName)
     : m_inputFiles(inputFiles), m_treeName(treeName) {}
 
-void HepQ::Tree::parallelize(unsigned int nslots) {
+void AnaQ::Tree::parallelize(unsigned int nslots) {
   m_trees.resize(nslots);
   m_treeReaders.resize(nslots);
   for (unsigned int islot = 0; islot < nslots; ++islot) {
@@ -30,7 +30,7 @@ void HepQ::Tree::parallelize(unsigned int nslots) {
 }
 
 std::vector<std::pair<unsigned long long, unsigned long long>>
-HepQ::Tree::partition() {
+AnaQ::Tree::partition() {
   ROOT::EnableThreadSafety();
   // ROOT::EnableImplicitMT(m_nslots);
 
@@ -69,15 +69,15 @@ HepQ::Tree::partition() {
   return parts;
 }
 
-void HepQ::Tree::initialize(unsigned int slot, unsigned long long begin,
+void AnaQ::Tree::initialize(unsigned int slot, unsigned long long begin,
                       unsigned long long end) {
   m_treeReaders[slot]->SetEntriesRange(begin, end);
 }
 
-void HepQ::Tree::execute(unsigned int slot, unsigned long long entry) {
+void AnaQ::Tree::execute(unsigned int slot, unsigned long long entry) {
   m_treeReaders[slot]->SetEntry(entry);
 }
 
-void HepQ::Tree::finalize(unsigned int) {
+void AnaQ::Tree::finalize(unsigned int) {
   // m_treeReaders[slot].reset(nullptr);
 }

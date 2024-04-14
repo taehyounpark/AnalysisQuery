@@ -14,17 +14,17 @@
 
 #pragma link C++ class queryosity::dataflow;
 
-#pragma link C++ class HepQ::Hist < 1, float>;
-#pragma link C++ class HepQ::Hist < 2, float>;
-#pragma link C++ class HepQ::Hist < 3, float>;
-#pragma link C++ class HepQ::Hist < 1, ROOT::RVec < float>>;
-#pragma link C++ class HepQ::Hist < 2, ROOT::RVec < float>>;
-#pragma link C++ class HepQ::Hist < 3, ROOT::RVec < float>>;
+#pragma link C++ class AnaQ::Hist < 1, float>;
+#pragma link C++ class AnaQ::Hist < 2, float>;
+#pragma link C++ class AnaQ::Hist < 3, float>;
+#pragma link C++ class AnaQ::Hist < 1, ROOT::RVec < float>>;
+#pragma link C++ class AnaQ::Hist < 2, ROOT::RVec < float>>;
+#pragma link C++ class AnaQ::Hist < 3, ROOT::RVec < float>>;
 
-#pragma link C++ class HepQ::Tree;
-#pragma link C++ class HepQ::Event;
+#pragma link C++ class AnaQ::Tree;
+#pragma link C++ class AnaQ::Event;
 
-#pragma link C++ class HepQ::ElectronCalibration+;
+#pragma link C++ class AnaQ::ElectronCalibration+;
 
 #pragma link C++ nestedclass;
 #pragma link C++ nestedtypedef;

@@ -12,7 +12,7 @@
 #include "queryosity.h"
 
 
-namespace HepQ {
+namespace AnaQ {
 
 class ElectronCalibration : public ObjectCalibration<xAOD::ElectronContainer>
 {

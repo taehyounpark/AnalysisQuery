@@ -11,7 +11,7 @@
 #include "TH2F.h"
 #include "TH3F.h"
 
-namespace HepQ {
+namespace AnaQ {
 
 namespace HistHelpers
 {

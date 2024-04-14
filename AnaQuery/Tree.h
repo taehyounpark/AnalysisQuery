@@ -17,9 +17,9 @@
 
 #include "queryosity.h"
 
-namespace HepQ {
+namespace AnaQ {
 
-class Tree : public queryosity::dataset::reader<HepQ::Tree> {
+class Tree : public queryosity::dataset::reader<AnaQ::Tree> {
 
 public:
   class Reader;
@@ -196,14 +196,14 @@ protected:
 }
 
 template <typename U>
-std::unique_ptr<HepQ::Tree::Branch<U>> HepQ::Tree::read(unsigned int slot,
+std::unique_ptr<AnaQ::Tree::Branch<U>> AnaQ::Tree::read(unsigned int slot,
                                             const std::string &branchName) {
   return std::make_unique<Branch<U>>(branchName, *m_treeReaders[slot]);
 }
 
 template <typename... ColumnTypes>
 template <typename... Names>
-HepQ::Tree::Snapshot<ColumnTypes...>::Snapshot(const std::string &treeName,
+AnaQ::Tree::Snapshot<ColumnTypes...>::Snapshot(const std::string &treeName,
                                          Names const &...columnNames)
     : m_snapshot(std::make_shared<TTree>(treeName.c_str(), treeName.c_str())),
       m_branches(makeBranches(std::index_sequence_for<ColumnTypes...>(),
@@ -212,19 +212,19 @@ HepQ::Tree::Snapshot<ColumnTypes...>::Snapshot(const std::string &treeName,
 }
 
 template <typename... ColumnTypes>
-void HepQ::Tree::Snapshot<ColumnTypes...>::fill(
+void AnaQ::Tree::Snapshot<ColumnTypes...>::fill(
     queryosity::column::observable<ColumnTypes>... columns, double) {
   this->fillBranchs(std::index_sequence_for<ColumnTypes...>(), columns...);
   m_snapshot->Fill();
 }
 
 template <typename... ColumnTypes>
-std::shared_ptr<TTree> HepQ::Tree::Snapshot<ColumnTypes...>::result() const {
+std::shared_ptr<TTree> AnaQ::Tree::Snapshot<ColumnTypes...>::result() const {
   return m_snapshot;
 }
 
 template <typename... ColumnTypes>
-std::shared_ptr<TTree> HepQ::Tree::Snapshot<ColumnTypes...>::merge(
+std::shared_ptr<TTree> AnaQ::Tree::Snapshot<ColumnTypes...>::merge(
     std::vector<std::shared_ptr<TTree>> const &results) const {
   TList list;
   for (auto const &result : results) {

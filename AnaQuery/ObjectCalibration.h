@@ -18,7 +18,7 @@
 
 #include "queryosity.h"
 
-namespace HepQ {
+namespace AnaQ {
 
 template <typename Cont>
 struct ShallowCopy {
@@ -53,5 +53,5 @@ protected:
 }
 
 template <typename Cont>
-HepQ::ShallowCopy<Cont>::ShallowCopy(std::pair<Cont*, xAOD::ShallowAuxContainer*> containers) :
+AnaQ::ShallowCopy<Cont>::ShallowCopy(std::pair<Cont*, xAOD::ShallowAuxContainer*> containers) :
   elements(containers.first), aux(containers.second) {}
