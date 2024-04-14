@@ -61,18 +61,18 @@ int main() {
   auto mu_SF = ds.read(dataset::column<float>("scaleFactor_MUON"));
   auto el_SF = ds.read(dataset::column<float>("scaleFactor_ELE"));
   // leptons
-  auto [lep_pT, lep_eta, lep_phi, lep_E, lep_Q, lep_type] = ds.read(
+  auto [lep_pT_GeV, lep_eta, lep_phi, lep_E_GeV, lep_Q, lep_type] = ds.read(
       dataset::column<VecF>("lep_pt"), dataset::column<VecF>("lep_eta"),
       dataset::column<VecF>("lep_phi"), dataset::column<VecF>("lep_E"),
       dataset::column<VecF>("lep_charge"), dataset::column<VecUI>("lep_type"));
   // missing transverse energy
-  auto [met, met_phi] = ds.read(dataset::column<float>("met_et"),
+  auto [met_GeV, met_phi] = ds.read(dataset::column<float>("met_et"),
                                     dataset::column<float>("met_phi"));
   // units
   auto MeV = df.define(column::constant<float>(1000.0));
-  lep_pT = lep_pT / MeV;
-  lep_E = lep_E / MeV;
-  met = met / MeV;
+  auto lep_pT = lep_pT_GeV / MeV;
+  auto lep_E = lep_E_GeV / MeV;
+  auto met = met_GeV / MeV;
 
   // select electrons
   auto el_sel = lep_type == df.define(column::constant(11));

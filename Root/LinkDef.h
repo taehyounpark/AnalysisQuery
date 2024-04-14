@@ -2,8 +2,6 @@
 #include "AnaQuery/Tree.h"
 #include "AnaQuery/Hist.h"
 
-#include "AnaQuery/ElectronCalibration.h"
-
 #include "queryosity.h"
 
 #ifdef __CINT__
@@ -23,8 +21,6 @@
 
 #pragma link C++ class AnaQ::Tree;
 #pragma link C++ class AnaQ::Event;
-
-#pragma link C++ class AnaQ::ElectronCalibration+;
 
 #pragma link C++ nestedclass;
 #pragma link C++ nestedtypedef;

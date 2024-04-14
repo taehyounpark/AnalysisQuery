@@ -1,15 +1,11 @@
 
 project(AnaQuery)
 
-file(GLOB HEPQ_HEADERS AnaQuery/*.h)
-list(FILTER HEPQ_HEADERS EXCLUDE REGEX ".*AnaQuery/Event\.h$")
-list(FILTER HEPQ_HEADERS EXCLUDE REGEX ".*AnaQuery/AnaQueryDict\.h$")
+set(HEPQ_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/AnaQuery/Tree.h ${CMAKE_CURRENT_SOURCE_DIR}/AnaQuery/Hist.h ${CMAKE_CURRENT_SOURCE_DIR}/AnaQuery/HistHelpers.h ${CMAKE_CURRENT_SOURCE_DIR}/AnaQuery/RDS.h)
 
-file(GLOB HEPQ_SOURCES Root/*.cxx)
-list(FILTER HEPQ_SOURCES EXCLUDE REGEX ".*Root/Event\.cxx$")
-list(FILTER HEPQ_HEADERS EXCLUDE REGEX ".*Root/LinkDef\.h$")
+set(HEPQ_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Root/Tree.cxx ${CMAKE_CURRENT_SOURCE_DIR}/Root/RDS.cxx)
 
-add_library(AnaQuery SHARED ${HEPQ_SOURCES} ${HEPQ_HEADERS} )
+add_library(AnaQuery SHARED ${HEPQ_SOURCES} ${HEPQ_HEADERS})
 
 target_include_directories(AnaQuery PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
