@@ -13,7 +13,7 @@
 
 namespace HepQ {
 
-namespace HistUtils
+namespace HistHelpers
 {
 
 	// create the appropriate histogram given the dimensionality and precision of columns.

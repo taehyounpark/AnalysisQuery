@@ -9,23 +9,23 @@
 HepQ::Event::Event(const std::vector<std::string> &inputFiles,
              const std::string &collection, const std::string &metadata)
     : m_inputFiles(inputFiles), m_treeName(collection), m_metaName(metadata) {
-  ROOT::EnableThreadSafety();
-  xAOD::Init().ignore();
 }
 
 void HepQ::Event::parallelize(unsigned int nslots) {
-  m_tevents.resize(nslots);
+  ROOT::EnableThreadSafety();
+  xAOD::Init().ignore();
+  m_event_per_slot.resize(nslots);
   for (unsigned int islot = 0; islot < nslots; ++islot) {
     auto tree = std::make_unique<TChain>(m_treeName.c_str(), m_treeName.c_str());
     for (auto const &filePath : m_inputFiles) {
       tree->Add(filePath.c_str());
     }
     tree->ResetBit(kMustCleanup);
-    auto tevent = std::make_unique<xAOD::TEvent>();
-    if (tevent->readFrom(tree.release()).isFailure()) {
+    auto event = std::make_unique<xAOD::TEvent>();
+    if (event->readFrom(tree.release()).isFailure()) {
       throw std::runtime_error("failed to read event");
     };
-    m_tevents[islot] = std::move(tevent);
+    m_event_per_slot[islot] = std::move(event);
   }
 }
 
@@ -60,6 +60,8 @@ std::vector<std::pair<unsigned long long, unsigned long long>> HepQ::Event::part
     offset += fileEntries;
   }
 
+  // DISABLE multithreading
+  // return {{parts.front().first, parts.back().second}};
   return parts;
 }
 
@@ -68,7 +70,7 @@ void HepQ::Event::initialize(unsigned int, unsigned long long, unsigned long lon
 }
 
 void HepQ::Event::execute(unsigned int slot, unsigned long long entry) {
-  if (m_tevents[slot]->getEntry(entry) < 0) {
+  if (m_event_per_slot[slot]->getEntry(entry) < 0) {
     throw std::runtime_error("failed to get entry");
   }
 }

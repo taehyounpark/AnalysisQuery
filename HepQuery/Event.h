@@ -48,7 +48,7 @@ protected:
   std::string m_treeName;
   std::string m_metaName;
 
-  std::vector<std::unique_ptr<xAOD::TEvent>> m_tevents;
+  std::vector<std::unique_ptr<xAOD::TEvent>> m_event_per_slot;
 };
 
 } // namespace HepQ
@@ -79,5 +79,5 @@ protected:
 template <typename U>
 std::unique_ptr<HepQ::Event::Container<U>>
 HepQ::Event::read(unsigned int slot, const std::string &containerName) const {
-  return std::make_unique<Container<U>>(containerName, *m_tevents[slot]);
+  return std::make_unique<Container<U>>(containerName, *m_event_per_slot[slot]);
 }

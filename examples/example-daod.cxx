@@ -117,7 +117,7 @@ int main() {
           .filter(column::expression(TwoElectrons))(selectedElectrons);
 
   auto selectedElectronsPtHist =
-      df.get(query::plan<HepQ::Hist<1, float>>("diElectronMass", 100, 0, 500))
+      df.get(query::output<HepQ::Hist<1, float>>("diElectronMass", 100, 0, 500))
           .fill(diElectronsMassGeV)
           .at(atLeastTwoSelectedElectrons);
 

@@ -2,6 +2,12 @@ import ROOT
 from ROOT import queryosity as qty
 import cppyy
 
+# this module will ONLY be developed if and when users desire the feature,
+# which will be to enable the dataflow interface to be invoked from Python.
+# due to cppyy-backend (cling)'s limitations on ROOT side, automatic bindings
+# do not work. Instead, a "manual" layer to translate Python(ic) function calls on the dataflow & lazy nodes to C++ using cling interpreter itself must be developed.
+# note: this limitation does not exist in cppyy v3.0.0 and beyond.
+
 # trigger queryosity to be loaded
 df = qty.dataflow()
 cppyy.cppdef('''

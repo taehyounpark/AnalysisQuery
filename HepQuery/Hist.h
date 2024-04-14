@@ -141,19 +141,19 @@ protected:
 
 }
 
-#include "HepQuery/HistUtils.h"
+#include "HepQuery/HistHelpers.h"
 
 template <typename Prec>
 HepQ::Hist<1, Prec>::Hist(const std::string &name, unsigned int nbins, double xmin,
                     double xmax)
     : queryosity::query::definition<std::shared_ptr<TH1>(Prec)>() {
-  m_hist = HistUtils::makeHist<1, Prec>(nbins, xmin, xmax);
+  m_hist = HistHelpers::makeHist<1, Prec>(nbins, xmin, xmax);
   m_hist->SetName(name.c_str());
 }
 
 template <typename Prec>
 HepQ::Hist<1, Prec>::Hist(const std::string &name, const std::vector<double> &xbins) {
-  m_hist = HistUtils::makeHist<1, Prec>(xbins);
+  m_hist = HistHelpers::makeHist<1, Prec>(xbins);
   m_hist->SetName(name.c_str());
 }
 
@@ -181,7 +181,7 @@ template <typename Prec>
 HepQ::Hist<2, Prec>::Hist(const std::string &name, const std::vector<double> &xbins,
                     const std::vector<double> &ybins) {
   m_hist =
-      std::static_pointer_cast<TH2>(HistUtils::makeHist<2, Prec>(xbins, ybins));
+      std::static_pointer_cast<TH2>(HistHelpers::makeHist<2, Prec>(xbins, ybins));
   m_hist->SetName(name.c_str());
 }
 
@@ -212,7 +212,7 @@ HepQ::Hist<3, Prec>::Hist(const std::string &name, const std::vector<double> &xb
                     const std::vector<double> &zbins)
     : queryosity::query::definition<std::shared_ptr<TH3>(Prec, Prec, Prec)>() {
   m_hist = std::static_pointer_cast<TH3>(
-      HistUtils::makeHist<3, Prec>(xbins, ybins, zbins));
+      HistHelpers::makeHist<3, Prec>(xbins, ybins, zbins));
   m_hist->SetName(name.c_str());
 }
 
@@ -243,14 +243,14 @@ template <typename Prec> std::shared_ptr<TH3> HepQ::Hist<3, Prec>::result() cons
 template <typename Prec>
 HepQ::Hist<1, ROOT::RVec<Prec>>::Hist(const std::string &name, unsigned int nbins,
                                 double xmin, double xmax) {
-  m_hist = HistUtils::makeHist<1, Prec>(nbins, xmin, xmax);
+  m_hist = HistHelpers::makeHist<1, Prec>(nbins, xmin, xmax);
   m_hist->SetName(name.c_str());
 }
 
 template <typename Prec>
 HepQ::Hist<1, ROOT::RVec<Prec>>::Hist(const std::string &name,
                                 const std::vector<double> &xbins) {
-  m_hist = HistUtils::makeHist<1, Prec>(xbins);
+  m_hist = HistHelpers::makeHist<1, Prec>(xbins);
   m_hist->SetName(name.c_str());
 }
 
@@ -283,7 +283,7 @@ HepQ::Hist<2, ROOT::RVec<Prec>>::Hist(const std::string &name,
                                 const std::vector<double> &xbins,
                                 const std::vector<double> &ybins) {
   m_hist =
-      std::static_pointer_cast<TH2>(HistUtils::makeHist<2, Prec>(xbins, ybins));
+      std::static_pointer_cast<TH2>(HistHelpers::makeHist<2, Prec>(xbins, ybins));
   m_hist->SetName(name.c_str());
 }
 
@@ -321,7 +321,7 @@ HepQ::Hist<3, ROOT::RVec<Prec>>::Hist(const std::string &name,
                                 const std::vector<double> &ybins,
                                 const std::vector<double> &zbins) {
   m_hist = std::static_pointer_cast<TH3>(
-      HistUtils::makeHist<3, Prec>(xbins, ybins, zbins));
+      HistHelpers::makeHist<3, Prec>(xbins, ybins, zbins));
   m_hist->SetName(name.c_str());
 }
 
