@@ -24,7 +24,8 @@ public:
   Hist(const std::string &, const std::vector<double> &);
   virtual ~Hist() = default;
 
-  virtual void fill(queryosity::column::observable<Prec>, double) final override;
+  virtual void fill(queryosity::column::observable<Prec>,
+                    double) final override;
   virtual std::shared_ptr<TH1> result() const final override;
   virtual std::shared_ptr<TH1>
   merge(std::vector<std::shared_ptr<TH1>> const &results) const final override;
@@ -44,7 +45,8 @@ public:
   virtual ~Hist() = default;
 
   virtual void fill(queryosity::column::observable<Prec>,
-                    queryosity::column::observable<Prec>, double) final override;
+                    queryosity::column::observable<Prec>,
+                    double) final override;
   virtual std::shared_ptr<TH2> result() const final override;
   virtual std::shared_ptr<TH2>
   merge(std::vector<std::shared_ptr<TH2>> const &results) const final override;
@@ -64,7 +66,8 @@ public:
 
   virtual void fill(queryosity::column::observable<Prec>,
                     queryosity::column::observable<Prec>,
-                    queryosity::column::observable<Prec>, double) final override;
+                    queryosity::column::observable<Prec>,
+                    double) final override;
   virtual std::shared_ptr<TH3> result() const final override;
   virtual std::shared_ptr<TH3>
   merge(std::vector<std::shared_ptr<TH3>> const &results) const final override;
@@ -139,36 +142,39 @@ protected:
   std::shared_ptr<TH3> m_hist; //!
 };
 
-}
+} // namespace AnaQ
 
 #include "AnaQuery/HistHelpers.h"
 
 template <typename Prec>
-AnaQ::Hist<1, Prec>::Hist(const std::string &name, unsigned int nbins, double xmin,
-                    double xmax)
+AnaQ::Hist<1, Prec>::Hist(const std::string &name, unsigned int nbins,
+                          double xmin, double xmax)
     : queryosity::query::definition<std::shared_ptr<TH1>(Prec)>() {
   m_hist = HistHelpers::makeHist<1, Prec>(nbins, xmin, xmax);
   m_hist->SetName(name.c_str());
 }
 
 template <typename Prec>
-AnaQ::Hist<1, Prec>::Hist(const std::string &name, const std::vector<double> &xbins) {
+AnaQ::Hist<1, Prec>::Hist(const std::string &name,
+                          const std::vector<double> &xbins) {
   m_hist = HistHelpers::makeHist<1, Prec>(xbins);
   m_hist->SetName(name.c_str());
 }
 
 template <typename Prec>
-void AnaQ::Hist<1, Prec>::fill(queryosity::column::observable<Prec> x, double w) {
+void AnaQ::Hist<1, Prec>::fill(queryosity::column::observable<Prec> x,
+                               double w) {
   m_hist->Fill(x.value(), w);
 }
 
-template <typename Prec> std::shared_ptr<TH1> AnaQ::Hist<1, Prec>::result() const {
+template <typename Prec>
+std::shared_ptr<TH1> AnaQ::Hist<1, Prec>::result() const {
   return m_hist;
 }
 
 template <typename Prec>
-std::shared_ptr<TH1>
-AnaQ::Hist<1, Prec>::merge(std::vector<std::shared_ptr<TH1>> const &results) const {
+std::shared_ptr<TH1> AnaQ::Hist<1, Prec>::merge(
+    std::vector<std::shared_ptr<TH1>> const &results) const {
   auto merged_result =
       std::shared_ptr<TH1>(static_cast<TH1 *>(results[0]->Clone()));
   for (size_t islot = 1; islot < results.size(); ++islot) {
@@ -178,22 +184,24 @@ AnaQ::Hist<1, Prec>::merge(std::vector<std::shared_ptr<TH1>> const &results) con
 }
 
 template <typename Prec>
-AnaQ::Hist<2, Prec>::Hist(const std::string &name, const std::vector<double> &xbins,
-                    const std::vector<double> &ybins) {
-  m_hist =
-      std::static_pointer_cast<TH2>(HistHelpers::makeHist<2, Prec>(xbins, ybins));
+AnaQ::Hist<2, Prec>::Hist(const std::string &name,
+                          const std::vector<double> &xbins,
+                          const std::vector<double> &ybins) {
+  m_hist = std::static_pointer_cast<TH2>(
+      HistHelpers::makeHist<2, Prec>(xbins, ybins));
   m_hist->SetName(name.c_str());
 }
 
 template <typename Prec>
 void AnaQ::Hist<2, Prec>::fill(queryosity::column::observable<Prec> x,
-                         queryosity::column::observable<Prec> y, double w) {
+                               queryosity::column::observable<Prec> y,
+                               double w) {
   m_hist->Fill(x.value(), y.value(), w);
 }
 
 template <typename Prec>
-std::shared_ptr<TH2>
-AnaQ::Hist<2, Prec>::merge(std::vector<std::shared_ptr<TH2>> const &results) const {
+std::shared_ptr<TH2> AnaQ::Hist<2, Prec>::merge(
+    std::vector<std::shared_ptr<TH2>> const &results) const {
   auto merged_result =
       std::shared_ptr<TH2>(static_cast<TH2 *>(results[0]->Clone()));
   for (size_t islot = 1; islot < results.size(); ++islot) {
@@ -202,14 +210,16 @@ AnaQ::Hist<2, Prec>::merge(std::vector<std::shared_ptr<TH2>> const &results) con
   return merged_result;
 }
 
-template <typename Prec> std::shared_ptr<TH2> AnaQ::Hist<2, Prec>::result() const {
+template <typename Prec>
+std::shared_ptr<TH2> AnaQ::Hist<2, Prec>::result() const {
   return m_hist;
 }
 
 template <typename Prec>
-AnaQ::Hist<3, Prec>::Hist(const std::string &name, const std::vector<double> &xbins,
-                    const std::vector<double> &ybins,
-                    const std::vector<double> &zbins)
+AnaQ::Hist<3, Prec>::Hist(const std::string &name,
+                          const std::vector<double> &xbins,
+                          const std::vector<double> &ybins,
+                          const std::vector<double> &zbins)
     : queryosity::query::definition<std::shared_ptr<TH3>(Prec, Prec, Prec)>() {
   m_hist = std::static_pointer_cast<TH3>(
       HistHelpers::makeHist<3, Prec>(xbins, ybins, zbins));
@@ -218,14 +228,15 @@ AnaQ::Hist<3, Prec>::Hist(const std::string &name, const std::vector<double> &xb
 
 template <typename Prec>
 void AnaQ::Hist<3, Prec>::fill(queryosity::column::observable<Prec> x,
-                         queryosity::column::observable<Prec> y,
-                         queryosity::column::observable<Prec> z, double w) {
+                               queryosity::column::observable<Prec> y,
+                               queryosity::column::observable<Prec> z,
+                               double w) {
   m_hist->Fill(x.value(), y.value(), z.value(), w);
 }
 
 template <typename Prec>
-std::shared_ptr<TH3>
-AnaQ::Hist<3, Prec>::merge(std::vector<std::shared_ptr<TH3>> const &results) const {
+std::shared_ptr<TH3> AnaQ::Hist<3, Prec>::merge(
+    std::vector<std::shared_ptr<TH3>> const &results) const {
   auto merged_result =
       std::shared_ptr<TH3>(static_cast<TH3 *>(results[0]->Clone()));
   for (size_t islot = 1; islot < results.size(); ++islot) {
@@ -234,22 +245,24 @@ AnaQ::Hist<3, Prec>::merge(std::vector<std::shared_ptr<TH3>> const &results) con
   return merged_result;
 }
 
-template <typename Prec> std::shared_ptr<TH3> AnaQ::Hist<3, Prec>::result() const {
+template <typename Prec>
+std::shared_ptr<TH3> AnaQ::Hist<3, Prec>::result() const {
   return m_hist;
 }
 
 // vector<T>
 
 template <typename Prec>
-AnaQ::Hist<1, ROOT::RVec<Prec>>::Hist(const std::string &name, unsigned int nbins,
-                                double xmin, double xmax) {
+AnaQ::Hist<1, ROOT::RVec<Prec>>::Hist(const std::string &name,
+                                      unsigned int nbins, double xmin,
+                                      double xmax) {
   m_hist = HistHelpers::makeHist<1, Prec>(nbins, xmin, xmax);
   m_hist->SetName(name.c_str());
 }
 
 template <typename Prec>
 AnaQ::Hist<1, ROOT::RVec<Prec>>::Hist(const std::string &name,
-                                const std::vector<double> &xbins) {
+                                      const std::vector<double> &xbins) {
   m_hist = HistHelpers::makeHist<1, Prec>(xbins);
   m_hist->SetName(name.c_str());
 }
@@ -280,10 +293,10 @@ std::shared_ptr<TH1> AnaQ::Hist<1, ROOT::RVec<Prec>>::result() const {
 
 template <typename Prec>
 AnaQ::Hist<2, ROOT::RVec<Prec>>::Hist(const std::string &name,
-                                const std::vector<double> &xbins,
-                                const std::vector<double> &ybins) {
-  m_hist =
-      std::static_pointer_cast<TH2>(HistHelpers::makeHist<2, Prec>(xbins, ybins));
+                                      const std::vector<double> &xbins,
+                                      const std::vector<double> &ybins) {
+  m_hist = std::static_pointer_cast<TH2>(
+      HistHelpers::makeHist<2, Prec>(xbins, ybins));
   m_hist->SetName(name.c_str());
 }
 
@@ -317,9 +330,9 @@ std::shared_ptr<TH2> AnaQ::Hist<2, ROOT::RVec<Prec>>::result() const {
 
 template <typename Prec>
 AnaQ::Hist<3, ROOT::RVec<Prec>>::Hist(const std::string &name,
-                                const std::vector<double> &xbins,
-                                const std::vector<double> &ybins,
-                                const std::vector<double> &zbins) {
+                                      const std::vector<double> &xbins,
+                                      const std::vector<double> &ybins,
+                                      const std::vector<double> &zbins) {
   m_hist = std::static_pointer_cast<TH3>(
       HistHelpers::makeHist<3, Prec>(xbins, ybins, zbins));
   m_hist->SetName(name.c_str());
