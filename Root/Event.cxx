@@ -7,16 +7,16 @@
 #include "xAODCutFlow/CutBookkeeperContainer.h"
 
 AnaQ::Event::Event(const std::vector<std::string> &inputFiles,
-             const std::string &collection, const std::string &metadata)
-    : m_inputFiles(inputFiles), m_treeName(collection), m_metaName(metadata) {
-}
+                   const std::string &collection, const std::string &metadata)
+    : m_inputFiles(inputFiles), m_treeName(collection), m_metaName(metadata) {}
 
 void AnaQ::Event::parallelize(unsigned int nslots) {
   ROOT::EnableThreadSafety();
   xAOD::Init().ignore();
   m_event_per_slot.resize(nslots);
   for (unsigned int islot = 0; islot < nslots; ++islot) {
-    auto tree = std::make_unique<TChain>(m_treeName.c_str(), m_treeName.c_str());
+    auto tree =
+        std::make_unique<TChain>(m_treeName.c_str(), m_treeName.c_str());
     for (auto const &filePath : m_inputFiles) {
       tree->Add(filePath.c_str());
     }
@@ -29,11 +29,12 @@ void AnaQ::Event::parallelize(unsigned int nslots) {
   }
 }
 
-std::vector<std::pair<unsigned long long, unsigned long long>> AnaQ::Event::partition() {
+std::vector<std::pair<unsigned long long, unsigned long long>>
+AnaQ::Event::partition() {
   TDirectory::TContext c;
 
   std::vector<std::pair<unsigned long long, unsigned long long>> parts;
-  
+
   // check all files for tree clusters
   long long offset = 0;
   for (auto const &filePath : m_inputFiles) {
@@ -65,7 +66,8 @@ std::vector<std::pair<unsigned long long, unsigned long long>> AnaQ::Event::part
   return parts;
 }
 
-void AnaQ::Event::initialize(unsigned int, unsigned long long, unsigned long long) {
+void AnaQ::Event::initialize(unsigned int, unsigned long long,
+                             unsigned long long) {
   // nothing to do
 }
 

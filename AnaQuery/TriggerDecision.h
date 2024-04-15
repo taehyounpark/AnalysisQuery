@@ -9,8 +9,8 @@
 
 #include "PATInterfaces/SystematicRegistry.h"
 #include "PATInterfaces/SystematicSet.h"
-#include "PATInterfaces/SystematicsUtil.h"
 #include "PATInterfaces/SystematicVariation.h"
+#include "PATInterfaces/SystematicsUtil.h"
 
 #include "xAODCore/ShallowCopy.h"
 #include "xAODEventInfo/EventInfo.h"
@@ -20,13 +20,15 @@
 class TriggerDecision : public EventDecision<bool> {
 
 public:
-  TriggerDecision(const std::string& triggerSelection);
+  TriggerDecision(const std::string &triggerSelection);
   ~TriggerDecision() = default;
 
-  bool evaluate(qty::column::observable<xAOD::EventInfo> evntInfo) const override;
+  bool
+  evaluate(qty::column::observable<xAOD::EventInfo> evntInfo) const override;
 
 protected:
-  asg::AnaToolHandle<TrigConf::ITrigConfigTool> m_trigConfTool_handle{"TrigConf::xAODConfigTool/xAODConfigTool",nullptr}; //!
-  asg::AnaToolHandle<Trig::TrigDecisionTool>    m_trigDecTool_handle{"Trig::TrigDecisionTool/TrigDecisionTool"}; //!
-
+  asg::AnaToolHandle<TrigConf::ITrigConfigTool> m_trigConfTool_handle{
+      "TrigConf::xAODConfigTool/xAODConfigTool", nullptr}; //!
+  asg::AnaToolHandle<Trig::TrigDecisionTool> m_trigDecTool_handle{
+      "Trig::TrigDecisionTool/TrigDecisionTool"}; //!
 };
