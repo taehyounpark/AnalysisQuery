@@ -5,6 +5,7 @@
 #include <AsgMessaging/MessageCheck.h>
 
 #include <SampleHandler/SampleHandler.h>
+#include <EventLoop/StatusCode.h>
 
 // jet reclustering and trimming
 #include "AthContainers/ConstDataVector.h"

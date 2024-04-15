@@ -49,6 +49,7 @@ protected:
   std::string m_metaName;
 
   std::vector<std::unique_ptr<xAOD::TEvent>> m_event_per_slot;
+  std::vector<std::unique_ptr<xAOD::TStore>> m_store_per_slot;
 };
 
 } // namespace AnaQ

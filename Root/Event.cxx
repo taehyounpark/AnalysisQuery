@@ -14,6 +14,7 @@ void AnaQ::Event::parallelize(unsigned int nslots) {
   ROOT::EnableThreadSafety();
   xAOD::Init().ignore();
   m_event_per_slot.resize(nslots);
+  m_store_per_slot.resize(nslots);
   for (unsigned int islot = 0; islot < nslots; ++islot) {
     auto tree =
         std::make_unique<TChain>(m_treeName.c_str(), m_treeName.c_str());
@@ -26,6 +27,7 @@ void AnaQ::Event::parallelize(unsigned int nslots) {
       throw std::runtime_error("failed to read event");
     };
     m_event_per_slot[islot] = std::move(event);
+    m_store_per_slot[islot] = std::make_unique<xAOD::TStore>();
   }
 }
 
@@ -72,6 +74,9 @@ void AnaQ::Event::initialize(unsigned int, unsigned long long,
 }
 
 void AnaQ::Event::execute(unsigned int slot, unsigned long long entry) {
+  m_event_per_slot[slot]->setActive();
+  m_store_per_slot[slot]->setActive();
+  m_store_per_slot[slot]->clear();
   if (m_event_per_slot[slot]->getEntry(entry) < 0) {
     throw std::runtime_error("failed to get entry");
   }
