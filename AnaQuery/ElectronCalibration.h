@@ -16,31 +16,19 @@ namespace AnaQ {
 class ElectronCalibration : public ObjectCalibration<xAOD::ElectronContainer> {
 
 public:
-  struct Config {
-    Config() = default;
-    std::string inContainerName = "Electrons";
-    std::string outContainerName = "ElectronsCalib";
-    bool applyIsolationCorrection = false;
-    std::string esModel = "es2017_R21_v0";
-    bool useFastSim = false;
-    std::string decorrelationModel = "";
-    std::string systMode = "All";
-    float systVal = 1.0;
-    bool sortByPt = true;
-  };
-
-public:
-  ElectronCalibration(Config cfg);
+  ElectronCalibration(Settings calibCfg, std::pair<std::string,float> systVar={"",0.0});
 
   void initialize(unsigned int, unsigned long long,
                   unsigned long long) final override;
-  SystematicMap<ConstDataVector<xAOD::ElectronContainer>>
+  ConstDataVector<xAOD::ElectronContainer>
   evaluate(qty::column::observable<xAOD::ElectronContainer> elCont)
       const final override;
   void finalize(unsigned int) final override;
 
 protected:
-  Config m_cfg;
+  Settings m_calibCfg;
+  std::string m_systName;
+  float       m_systVal;
 
   std::unique_ptr<CP::EgammaCalibrationAndSmearingTool>
       m_EgammaCalibrationAndSmearingTool;                                 //!

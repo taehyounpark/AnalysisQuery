@@ -1,120 +1,50 @@
 #include "AnaQuery/EventHelpers.h"
 
-std::vector< CP::SystematicSet > AnaQ::EventHelpers::getListofSystematics(const CP::SystematicSet inSysts, std::string systNames, float systVal ) {
-
+CP::SystematicSet AnaQ::EventHelpers::getSystematicVariation(const CP::SystematicSet& inSysts, const std::string& systMode, float varSigma) {
   std::vector<CP::SystematicSet> outSystList;
-
-  // parse and split by comma
-  std::vector<std::string> systNamesList;
-  std::string token;
-  std::istringstream ss(systNames);
-  while (std::getline(ss, token, ',')) {
-    systNamesList.push_back(token);
-  }
-
-  // msg << MSG::DEBUG << "systNames: " << endmsg;
-  for (const std::string &name : systNamesList) {
-    // msg << MSG::DEBUG << "\t" << name << endmsg;
-  }
-
-  // loop over input set
-  //
-  for (const auto &syst : inSysts) {
-
-    // msg << MSG::DEBUG << syst.name() << endmsg;
-
-    // 1.
-    // input systName does not contain "All":
-    // match with input systName(s) from the list:
-    // add these systematics only to the output list
-    //
-    if (systNames.find("All") == std::string::npos) {
-      // do systNames vector matching
-      bool valid = false;
-      for (const auto &s : systNamesList) {
-        if (s == syst.basename()) {
-          valid = true;
-          break;
-        }
-      }
-
+  if (systMode.empty()) {
+    // nominal only
+    outSystList.insert(outSystList.begin(), CP::SystematicSet());
+    const CP::SystematicVariation nullVar = CP::SystematicVariation("");
+    outSystList.back().insert(nullVar);
+  } else {
+    // find match from input systematics
+    for (const auto &syst : inSysts) {
       // continue if not matched
-      if (!valid)
-        continue;
-
-      // msg << MSG::DEBUG << "Found match! Adding systematic " << syst.name()
-      // << endmsg;
-
-      // continuous systematics - can choose at what sigma to evaluate
-      //
-      if (syst == CP::SystematicVariation(
-                      syst.basename(), CP::SystematicVariation::CONTINUOUS)) {
-
-        outSystList.push_back(CP::SystematicSet());
-
-        if (systVal == 0) {
-          // msg << MSG::ERROR << "Setting continuous systematic to 0 is
-          // nominal! Please check!" << endmsg; RCU_THROW_MSG("Failure");
+      if (systMode == syst.basename()) {
+        // found matching systematic -- use it
+        if (syst == CP::SystematicVariation(
+          // continuous - apply with sigma value
+                        syst.basename(), CP::SystematicVariation::CONTINUOUS)) {
+          if (varSigma == 0) {
+            throw std::logic_error("setting a continuous systematic variation value to 0.0 is nominal");
+          }
+          outSystList.push_back(CP::SystematicSet());
+          outSystList.back().insert(
+              CP::SystematicVariation(syst.basename(), varSigma));
+        } else {
+          // discrete -- apply as-is
+          outSystList.push_back(CP::SystematicSet());
+          outSystList.back().insert(syst);
         }
-
-        outSystList.back().insert(
-            CP::SystematicVariation(syst.basename(), systVal));
-        outSystList.push_back(CP::SystematicSet());
-        outSystList.back().insert(
-            CP::SystematicVariation(syst.basename(), -1.0 * fabs(systVal)));
-
-      } else {
-        // not a continuous system
-
-        outSystList.push_back(CP::SystematicSet());
-        outSystList.back().insert(syst);
+        // found match -- done
+        break;
       }
     }
-    // 2.
-    // input systName contains "All":
-    // add all systematics to the output list
-    //
-    else if (systNames.find("All") != std::string::npos) {
-
-      // msg << MSG::DEBUG << "Adding systematic " << syst.name() << endmsg;
-
-      // continuous systematics - can choose at what sigma to evaluate
-      // add +1 and -1 for when running all
-      //
-      if (syst == CP::SystematicVariation(
-                      syst.basename(), CP::SystematicVariation::CONTINUOUS)) {
-
-        if (systVal == 0) {
-          // msg << MSG::ERROR << "Setting continuous systematic to 0 is
-          // nominal! Please check!" << endmsg; RCU_THROW_MSG("Failure");
-        }
-
-        outSystList.push_back(CP::SystematicSet());
-        outSystList.back().insert(
-            CP::SystematicVariation(syst.basename(), fabs(systVal)));
-        outSystList.push_back(CP::SystematicSet());
-        outSystList.back().insert(
-            CP::SystematicVariation(syst.basename(), -1.0 * fabs(systVal)));
-
-      } else {
-        // not a continuous systematic
-
-        outSystList.push_back(CP::SystematicSet());
-        outSystList.back().insert(syst);
-      }
-    }
-
-  } // loop over recommended systematics
-
-  // Add an empty CP::SystematicVariation at the top of output list to account
-  // for the nominal case when running on all systematics or on nominal only
-  //
-  if (systNames.find("Nominal") != std::string::npos ||
-      systNames.find("All") != std::string::npos || systNames.empty()) {
+  }
+  if (outSystList.empty()) {
+    // no systematic found from input -- use nominal
+    std::cout << "no systematic called '" << systMode <<"' found -- setting it to nominal" << std::endl;
     outSystList.insert(outSystList.begin(), CP::SystematicSet());
     const CP::SystematicVariation nullVar = CP::SystematicVariation("");
     outSystList.back().insert(nullVar);
   }
+  // there should only be one systematic found
+  return outSystList[0];
+}
 
-  return outSystList;
+AnaQ::SystematicMode::SystematicMode(const std::string& name, float value) : name(name), value(value) {}
+
+CP::SystematicSet const& AnaQ::SystematicMode::from(const CP::SystematicSet& inSysts) const {
+  return EventHelpers::getSystematicVariation(inSysts, this->name, this->value);
 }

@@ -2,11 +2,10 @@
 
 #include "AnaQuery/EventHelpers.h"
 
-#include "AsgTools/AnaToolHandle.h"
-
 // Trigger include(s).
 #include "TrigConfxAOD/xAODConfigTool.h"
 #include "TrigDecisionTool/TrigDecisionTool.h"
+#include "AsgTools/AnaToolHandle.h"
 
 #include "PATInterfaces/SystematicRegistry.h"
 #include "PATInterfaces/SystematicSet.h"
@@ -44,8 +43,11 @@ public:
   void finalize(unsigned int) override;
 
 protected:
-  mutable std::unique_ptr<xAODConfigTool> m_configTool; //!
-  mutable std::unique_ptr<Trig::TrigDecisionTool> m_decisionTool; //!
+  mutable asg::AnaToolHandle<TrigConf::ITrigConfigTool>  m_trigCfgTool_handle; //!
+  mutable asg::AnaToolHandle<Trig::TrigDecisionTool> m_trigDecTool_handle; //!
+
+  // ToolHandle<TrigConf::ITrigConfigTool> configHandle; //!
+  // mutable std::unique_ptr<Trig::TrigDecisionTool> m_decisionTool; //!
 
   std::string m_triggerSelection;
 

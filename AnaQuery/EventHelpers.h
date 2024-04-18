@@ -19,19 +19,42 @@
 #include "PATInterfaces/SystematicVariation.h"
 #include "PATInterfaces/SystematicsUtil.h"
 
+#include "PathResolver/PathResolver.h"
+
 #include "queryosity.h"
+
+#include <nlohmann/json.hpp>
 
 namespace AnaQ {
 
+using Settings = nlohmann::json;
+
 template <typename Cont> using SystematicMap = std::unordered_map<std::string,Cont>;
+
+struct SystematicMode {
+  SystematicMode(const std::string& name, float value);
+  ~SystematicMode() = default;
+  CP::SystematicSet const& from(const CP::SystematicSet& inSysts) const;
+  std::string name;
+  float value;
+};
 
 template <typename Dec>
 using EventDecision = qty::column::definition<Dec(xAOD::EventInfo)>;
 
+template <typename T>
+using Observable = qty::column::observable<T>;
+
+template <typename T>
+using Column = qty::column::definition<T>;
+
+template <typename T>
+using Query = qty::query::definition<T>;
+
 namespace EventHelpers {
 
-std::vector<CP::SystematicSet>
-getListofSystematics(const CP::SystematicSet inSysts, std::string systNames,
+CP::SystematicSet
+getSystematicVariation(const CP::SystematicSet& inSysts, const std::string& systName,
                      float systVal);
 
 template <typename Cont> ConstDataVector<Cont> makeConstDataVector(Cont *cont);

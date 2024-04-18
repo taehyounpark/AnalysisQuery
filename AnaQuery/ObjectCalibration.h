@@ -29,7 +29,7 @@ template <typename Cont> struct ShallowCopy {
 
 template <typename Cont>
 class ObjectCalibration
-    : public qty::column::definition<SystematicMap<ConstDataVector<Cont>>(
+    : public qty::column::definition<ConstDataVector<Cont>(
           Cont)> {
 
 private:
@@ -37,15 +37,13 @@ public:
   ObjectCalibration() = default;
 
 protected:
-  std::string m_outAuxContainerName;
-  std::string m_outSCContainerName;
-  std::string m_outSCAuxContainerName;
+  // std::string m_outAuxContainerName;
+  // std::string m_outSCContainerName;
+  // std::string m_outSCAuxContainerName;
 
-  std::vector<CP::SystematicSet> m_systList; //!
-  std::vector<std::string> m_systNames;      //!
-
-  mutable std::unordered_map<std::string, ShallowCopy<Cont>>
-      m_shallowCopies; //!
+  CP::SystematicSet m_systVar; //!
+  mutable ShallowCopy<Cont>
+      m_shallowCopy; //!
 
   // ClassDef(ObjectCalibration, 1);
 };

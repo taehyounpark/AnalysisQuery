@@ -22,7 +22,9 @@ void AnaQ::Event::parallelize(unsigned int nslots) {
       tree->Add(filePath.c_str());
     }
     tree->ResetBit(kMustCleanup);
-    auto event = std::make_unique<xAOD::TEvent>();
+    // auto event = std::make_unique<xAOD::TEvent>(xAOD::TEvent::kClassAccess);
+    // auto event = std::make_unique<xAOD::TEvent>(xAOD::TEvent::kAthenaAccess);
+    auto event = std::make_unique<xAOD::TEvent>(xAOD::TEvent::kUndefinedAccess);
     if (event->readFrom(tree.release()).isFailure()) {
       throw std::runtime_error("failed to read event");
     };
@@ -68,14 +70,13 @@ AnaQ::Event::partition() {
   return parts;
 }
 
-void AnaQ::Event::initialize(unsigned int, unsigned long long,
+void AnaQ::Event::initialize(unsigned int slot, unsigned long long,
                              unsigned long long) {
-  // nothing to do
+  m_event_per_slot[slot]->setActive();
+  m_store_per_slot[slot]->setActive();
 }
 
 void AnaQ::Event::execute(unsigned int slot, unsigned long long entry) {
-  m_event_per_slot[slot]->setActive();
-  m_store_per_slot[slot]->setActive();
   m_store_per_slot[slot]->clear();
   if (m_event_per_slot[slot]->getEntry(entry) < 0) {
     throw std::runtime_error("failed to get entry");
