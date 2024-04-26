@@ -2,7 +2,7 @@
 
 #include "EventHelpers.h"
 
-// CP interface includes
+#include "PATInterfaces/ISystematicsTool.h"
 #include "PATInterfaces/SystematicRegistry.h"
 #include "PATInterfaces/SystematicSet.h"
 #include "PATInterfaces/SystematicVariation.h"
@@ -14,7 +14,6 @@
 #include "xAODBase/IParticleContainer.h"
 #include "xAODBase/IParticleHelpers.h"
 #include "xAODCore/ShallowCopy.h"
-#include "xAODEventInfo/EventInfo.h"
 
 #include "queryosity.h"
 
@@ -29,23 +28,17 @@ template <typename Cont> struct ShallowCopy {
 
 template <typename Cont>
 class ObjectCalibration
-    : public qty::column::definition<ConstDataVector<Cont>(
-          Cont)> {
+    : public Column<ConstDataVector<Cont>(Cont)> {
 
 private:
 public:
-  ObjectCalibration() = default;
+  ObjectCalibration(CP::SystematicVariation const &sysVar);
+  ~ObjectCalibration() = default;
 
 protected:
-  // std::string m_outAuxContainerName;
-  // std::string m_outSCContainerName;
-  // std::string m_outSCAuxContainerName;
+  CP::SystematicSet m_sysSet;
 
-  CP::SystematicSet m_systVar; //!
-  mutable ShallowCopy<Cont>
-      m_shallowCopy; //!
-
-  // ClassDef(ObjectCalibration, 1);
+  mutable ShallowCopy<Cont> m_shallowCopy; //!
 };
 
 } // namespace AnaQ
@@ -54,3 +47,8 @@ template <typename Cont>
 AnaQ::ShallowCopy<Cont>::ShallowCopy(
     std::pair<Cont *, xAOD::ShallowAuxContainer *> containers)
     : elements(containers.first), aux(containers.second) {}
+
+template <typename Cont>
+AnaQ::ObjectCalibration<Cont>::ObjectCalibration(
+    CP::SystematicVariation const &sysVar)
+    : m_sysSet(std::vector<CP::SystematicVariation>{sysVar}) {}

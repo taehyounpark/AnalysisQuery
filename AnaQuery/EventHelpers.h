@@ -3,6 +3,7 @@
 // local includes
 #include "AsgMessaging/StatusCode.h"
 #include <AsgMessaging/MessageCheck.h>
+#include <RootCoreUtils/ThrowMsg.h>
 
 #include <SampleHandler/SampleHandler.h>
 #include <EventLoop/StatusCode.h>
@@ -10,6 +11,8 @@
 // jet reclustering and trimming
 #include "AthContainers/ConstDataVector.h"
 #include "AthContainers/DataVector.h"
+#include "xAODBase/IParticleContainer.h"
+#include "xAODBase/IParticleHelpers.h"
 #include "xAODEventInfo/EventInfo.h"
 
 // CP interface includes
@@ -25,16 +28,18 @@
 
 #include <nlohmann/json.hpp>
 
+#include <ROOT/RVec.hxx>
+
 namespace AnaQ {
 
-using Settings = nlohmann::json;
+using Json = nlohmann::json;
 
 template <typename Cont> using SystematicMap = std::unordered_map<std::string,Cont>;
 
 struct SystematicMode {
   SystematicMode(const std::string& name, float value);
   ~SystematicMode() = default;
-  CP::SystematicSet const& from(const CP::SystematicSet& inSysts) const;
+  std::vector<CP::SystematicSet> from(const CP::SystematicSet& inSysts) const;
   std::string name;
   float value;
 };
@@ -51,13 +56,22 @@ using Column = qty::column::definition<T>;
 template <typename T>
 using Query = qty::query::definition<T>;
 
+using SystematicVariation = CP::SystematicVariation;
+
 namespace EventHelpers {
 
-CP::SystematicSet
+std::vector<CP::SystematicSet>
 getSystematicVariation(const CP::SystematicSet& inSysts, const std::string& systName,
                      float systVal);
 
 template <typename Cont> ConstDataVector<Cont> makeConstDataVector(Cont *cont);
+
+bool sortByPt(const xAOD::IParticle* partA, const xAOD::IParticle* partB);
+
+std::map<std::string, CP::SystematicVariation> makeSystematicVariationMap(Json const& sysCfg);
+
+template <typename Def, typename Nom>
+std::map<std::string, qty::column::definition<Def>> varyColumn(Nom const& nomCfg, Json const& sysCfg);
 
 } // namespace EventHelpers
 
@@ -71,4 +85,14 @@ ConstDataVector<Cont> AnaQ::EventHelpers::makeConstDataVector(Cont* cont) {
     cdv.push_back(itr);
   }
   return cdv;
+}
+
+template <typename Def, typename Nom>
+std::map<std::string, qty::column::definition<Def>> AnaQ::EventHelpers::varyColumn(Nom const& nomCfg, AnaQ::Json const& sysCfg) {
+  std::map<std::string, qty::column::definition<Def>> colVarMap;
+  auto varMap = makeSystematicVariationMap(sysCfg);
+  for (auto const& [name, sysVar] : varMap) {
+    colVarMap.insert({name, qty::column::definition<Def>(nomCfg, sysVar)});
+  }
+  return colVarMap;
 }

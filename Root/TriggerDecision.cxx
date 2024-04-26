@@ -11,7 +11,7 @@ void AnaQ::TriggerDecision::initialize(unsigned int slot, unsigned long long, un
   m_trigDecTool_handle.retrieve().ignore();
 }
 
-bool AnaQ::TriggerDecision::evaluate(qty::column::observable<xAOD::EventInfo> eventInfo) const {
+bool AnaQ::TriggerDecision::evaluate(qty::column::observable<xAOD::EventInfo>) const {
   // eventInfo.value();
   // if (m_trigCfgTool_handle->beginEvent() != EL::StatusCode::SUCCESS) {
   //   // std::cout << "failed" << std::endl;

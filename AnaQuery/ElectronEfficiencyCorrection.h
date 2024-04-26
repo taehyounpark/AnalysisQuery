@@ -14,8 +14,6 @@
 // external tools include(s):
 #include "ElectronEfficiencyCorrection/AsgElectronEfficiencyCorrectionTool.h"
 
-#include <ROOT/RVec.hxx>
-
 #include "queryosity.h"
 
 namespace AnaQ {
@@ -23,7 +21,8 @@ namespace AnaQ {
 class ElectronEfficiencyCorrection: public Column<ROOT::RVec<double>(ConstDataVector<xAOD::ElectronContainer>)> {
 
 public:
-  ElectronEfficiencyCorrection(Settings sfConfig, SystematicMode const& systMode = SystematicMode("",0.0));
+  ElectronEfficiencyCorrection(Json const& sfConfig);
+  ElectronEfficiencyCorrection(Json const& sfConfig, CP::SystematicVariation const& sysVar);
   ~ElectronEfficiencyCorrection() = default;
 
   void initialize(unsigned int, unsigned long long, unsigned long long) override;
@@ -34,13 +33,14 @@ protected:
   std::string m_toolName;
   int m_simulationFlavour;
   std::string m_correlationModel;
-  std::string m_workingPointPID;
-  std::string m_workingPointIso;
-  std::string m_workingPointReco;
+  std::string m_idWorkingPoint;
+  std::string m_isoWorkingPoint;
+  std::string m_recoWorkingPoint;
   std::string m_workingPointId;
-  std::string m_workingPointTrig;
+  std::string m_trigWorkingPoint;
+  std::vector<std::string> m_correctionFileNameList;
 
-  SystematicMode m_systMode;
+  CP::SystematicSet m_sysSet;
 
   std::unique_ptr<AsgElectronEfficiencyCorrectionTool> m_elEffCorrTool;  //!
 };

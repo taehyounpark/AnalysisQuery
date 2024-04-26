@@ -13,9 +13,7 @@ AnaQ::RDS::partition() {
   return m_rds->GetEntryRanges();
 }
 
-void AnaQ::RDS::initialize() { m_rds->Initialize(); }
-
-void AnaQ::RDS::finalize() { m_rds->Finalize(); }
+void AnaQ::RDS::initialize() { m_rds->Initialise(); }
 
 void AnaQ::RDS::initialize(unsigned int slot, unsigned long long begin,
                      unsigned long long /* end */) {
@@ -26,4 +24,6 @@ void AnaQ::RDS::execute(unsigned int slot, unsigned long long entry) {
   m_rds->SetEntry(slot, entry);
 }
 
-void AnaQ::RDS::finalize(unsigned int slot) { m_rds->FinalizeSlot(slot); }
+void AnaQ::RDS::finalize(unsigned int slot) { m_rds->FinaliseSlot(slot); }
+
+void AnaQ::RDS::finalize() { m_rds->Finalise(); }
