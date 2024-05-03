@@ -2,31 +2,39 @@
 
 #include "AnaQuery/EventHelpers.h"
 
-// EDM include(s):
+// EDM
 #include "xAODEgamma/ElectronContainer.h"
+#include "xAODEventInfo/EventInfo.h"
 
-// CP interface includes
-#include "PATInterfaces/SystematicsUtil.h"
+// CP tools
+#include "AsgTools/AnaToolHandle.h"
+#include "EgammaAnalysisInterfaces/IAsgElectronEfficiencyCorrectionTool.h"
+
+// CP interface
 #include "PATInterfaces/SystematicRegistry.h"
 #include "PATInterfaces/SystematicSet.h"
 #include "PATInterfaces/SystematicVariation.h"
-
-// external tools include(s):
-#include "ElectronEfficiencyCorrection/AsgElectronEfficiencyCorrectionTool.h"
+#include "PATInterfaces/SystematicsUtil.h"
 
 #include "queryosity.h"
 
 namespace AnaQ {
 
-class ElectronEfficiencyCorrection: public Column<ROOT::RVec<double>(ConstDataVector<xAOD::ElectronContainer>)> {
+class ElectronEfficiencyCorrection
+  : public Column<ROOT::RVec<double>(ConstDataVector<xAOD::ElectronContainer>)>
+{
 
 public:
   ElectronEfficiencyCorrection(Json const& sfConfig);
-  ElectronEfficiencyCorrection(Json const& sfConfig, CP::SystematicVariation const& sysVar);
+  ElectronEfficiencyCorrection(Json const& sfConfig,
+                               CP::SystematicVariation const& sysVar);
   ~ElectronEfficiencyCorrection() = default;
 
-  void initialize(unsigned int, unsigned long long, unsigned long long) override;
-  ROOT::RVec<double> evaluate(Observable<ConstDataVector<xAOD::ElectronContainer>>) const override;
+  void initialize(unsigned int,
+                  unsigned long long,
+                  unsigned long long) override;
+  ROOT::RVec<double> evaluate(
+    Observable<ConstDataVector<xAOD::ElectronContainer>>) const override;
   void finalize(unsigned int) override;
 
 protected:
@@ -42,7 +50,8 @@ protected:
 
   CP::SystematicSet m_sysSet;
 
-  std::unique_ptr<AsgElectronEfficiencyCorrectionTool> m_elEffCorrTool;  //!
+  mutable asg::AnaToolHandle<IAsgElectronEfficiencyCorrectionTool>
+    m_elEffCorrTool_handle; //!
 };
 
 }

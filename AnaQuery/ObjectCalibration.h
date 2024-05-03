@@ -19,36 +19,41 @@
 
 namespace AnaQ {
 
-template <typename Cont> struct ShallowCopy {
+template<typename Cont>
+struct ShallowCopy
+{
   ShallowCopy() = default;
-  ShallowCopy(std::pair<Cont *, xAOD::ShallowAuxContainer *> containers);
+  ShallowCopy(std::pair<Cont*, xAOD::ShallowAuxContainer*> containers);
   std::unique_ptr<Cont> elements;
   std::unique_ptr<xAOD::ShallowAuxContainer> aux;
 };
 
-template <typename Cont>
-class ObjectCalibration
-    : public Column<ConstDataVector<Cont>(Cont)> {
+template<typename Cont>
+class ObjectCalibration : public Column<ConstDataVector<Cont>(Cont)>
+{
 
-private:
 public:
-  ObjectCalibration(CP::SystematicVariation const &sysVar);
+  ObjectCalibration(CP::SystematicVariation const& sysVar);
   ~ObjectCalibration() = default;
 
 protected:
   CP::SystematicSet m_sysSet;
-
   mutable ShallowCopy<Cont> m_shallowCopy; //!
 };
 
 } // namespace AnaQ
 
-template <typename Cont>
+template<typename Cont>
 AnaQ::ShallowCopy<Cont>::ShallowCopy(
-    std::pair<Cont *, xAOD::ShallowAuxContainer *> containers)
-    : elements(containers.first), aux(containers.second) {}
+  std::pair<Cont*, xAOD::ShallowAuxContainer*> containers)
+  : elements(containers.first)
+  , aux(containers.second)
+{
+}
 
-template <typename Cont>
+template<typename Cont>
 AnaQ::ObjectCalibration<Cont>::ObjectCalibration(
-    CP::SystematicVariation const &sysVar)
-    : m_sysSet(std::vector<CP::SystematicVariation>{sysVar}) {}
+  CP::SystematicVariation const& sysVar)
+  : m_sysSet(std::vector<CP::SystematicVariation>{ sysVar })
+{
+}

@@ -40,11 +40,13 @@ atlas_add_library(
   Root/*.h
   Root/*.cxx
   ${AnaQueryDict}
+  PUBLIC_HEADERS 
+  AnaQuery
   INCLUDE_DIRS
   ${ROOT_INCLUDE_DIRS}
   LINK_LIBRARIES
-  nlohmann_json::nlohmann_json
   queryosity::queryosity
+  nlohmann_json::nlohmann_json
   ${ROOT_LIBRARIES}
   AthContainers
   AsgTools
@@ -67,21 +69,30 @@ atlas_add_library(
   xAODMetaData
   PATInterfaces
   GoodRunsListsLib
+  PileupReweightingLib
   TrigConfxAODLib
   TrigDecisionToolLib
   TriggerMatchingToolLib
-  PileupReweightingLib
+  TrigGlobalEfficiencyCorrectionLib
+  # TriggerAnalysisInterfacesLib
+  ElectronPhotonFourMomentumCorrectionLib
+  ElectronEfficiencyCorrectionLib
+  ElectronPhotonSelectorToolsLib
+  IsolationSelectionLib
+  IsolationCorrectionsLib
+  EGammaVariableCorrectionLib
   MuonMomentumCorrectionsLib
   MuonEfficiencyCorrectionsLib
   MuonSelectorToolsLib
   MuonAnalysisInterfacesLib
+  PhotonEfficiencyCorrectionLib
   JetCalibToolsLib
   JetSelectorToolsLib
   JetJvtEfficiencyLib
   JetSubStructureUtils
   JetTileCorrectionLib
-  JetEDM
   JetUncertaintiesLib
+  JetEDM
   JetCPInterfaces
   JetAnalysisInterfacesLib
   JetMomentToolsLib
@@ -90,13 +101,6 @@ atlas_add_library(
   PATInterfaces
   BoostedJetTaggersLib
   FTagAnalysisInterfacesLib
-  ElectronPhotonFourMomentumCorrectionLib
-  ElectronEfficiencyCorrectionLib
-  ElectronPhotonSelectorToolsLib
-  IsolationSelectionLib
-  IsolationCorrectionsLib
-  EGammaVariableCorrectionLib
-  PhotonEfficiencyCorrectionLib
   TauAnalysisToolsLib
   AssociationUtilsLib
   PMGToolsLib

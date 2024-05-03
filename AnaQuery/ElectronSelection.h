@@ -21,17 +21,19 @@
 namespace AnaQ {
 
 class ElectronSelection
-    : public Column<ConstDataVector<xAOD::ElectronContainer>(
-          ConstDataVector<xAOD::ElectronContainer>)> {
+  : public Column<ConstDataVector<xAOD::ElectronContainer>(
+      ConstDataVector<xAOD::ElectronContainer>)>
+{
 public:
-  ElectronSelection(const Json &cfg);
+  ElectronSelection(const Json& cfg);
   ~ElectronSelection() = default;
 
-  void initialize(unsigned int, unsigned long long, unsigned long long) override;
+  void initialize(unsigned int,
+                  unsigned long long,
+                  unsigned long long) override;
 
-  ConstDataVector<xAOD::ElectronContainer>
-  evaluate(Observable<ConstDataVector<xAOD::ElectronContainer>>)
-      const override;
+  ConstDataVector<xAOD::ElectronContainer> evaluate(
+    Observable<ConstDataVector<xAOD::ElectronContainer>>) const override;
 
   void finalize(unsigned int) override;
 

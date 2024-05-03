@@ -12,7 +12,9 @@ AnaQ::Event::Event(const std::vector<std::string> &inputFiles,
 
 void AnaQ::Event::parallelize(unsigned int nslots) {
   ROOT::EnableThreadSafety();
+  ROOT::EnableImplicitMT(nslots);
   xAOD::Init().ignore();
+  TDirectory::TContext c;
   m_event_per_slot.resize(nslots);
   m_store_per_slot.resize(nslots);
   for (unsigned int islot = 0; islot < nslots; ++islot) {
@@ -65,8 +67,6 @@ AnaQ::Event::partition() {
     offset += fileEntries;
   }
 
-  // DISABLE multithreading
-  // return {{parts.front().first, parts.back().second}};
   return parts;
 }
 

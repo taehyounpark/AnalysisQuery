@@ -14,6 +14,7 @@
 #include "xAODBase/IParticleContainer.h"
 #include "xAODBase/IParticleHelpers.h"
 #include "xAODEventInfo/EventInfo.h"
+#include "xAODTruth/TruthParticleContainer.h"
 
 // CP interface includes
 #include "PATInterfaces/ISystematicsTool.h"

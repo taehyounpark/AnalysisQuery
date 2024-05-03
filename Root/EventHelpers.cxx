@@ -67,7 +67,6 @@ AnaQ::EventHelpers::makeSystematicVariationMap(AnaQ::Json const &sysCfg) {
   for (auto const &[sys, vars] : sysCfg.items()) {
     for (auto const& var : vars.items()) {
       auto sysVar = CP::SystematicVariation(sys, var.value().get<float>());
-      std::cout << sysVar.name() << std::endl;
       varMap.insert({sysVar.name(), sysVar});
     }
   }

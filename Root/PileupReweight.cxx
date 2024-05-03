@@ -1,5 +1,7 @@
 #include "AnaQuery/PileupReweight.h"
 
+#include "TDirectory.h"
+
 AnaQ::PileupReweight::PileupReweight(Json const& prwCfg, CP::SystematicVariation const& sysVar) : m_sysSet(std::vector<CP::SystematicVariation>{sysVar}) {
   m_outputLevel = prwCfg.value("outputLevel",1);
   m_configFiles = prwCfg["configFiles"].get<std::vector<std::string>>();
@@ -18,14 +20,17 @@ void AnaQ::PileupReweight::initialize(unsigned int slot, unsigned long long, uns
     filePath = PathResolverFindCalibFile(filePath);
   }
   // setup tool
-  m_prwTool_handle = asg::AnaToolHandle<CP::IPileupReweightingTool>("CP::PileupReweightingTool/PileupReweightingTool_slot"+std::to_string(slot)+"_"+m_sysSet.name());
-  m_prwTool_handle.setProperty("OutputLevel", m_outputLevel).ignore();
-  m_prwTool_handle.setProperty("LumiCalcFiles", m_lumiCalcFiles).ignore();
-  m_prwTool_handle.setProperty("ConfigFiles", m_configFiles).ignore();
-  m_prwTool_handle.setProperty("UnrepresentedDataAction", m_unrepresentedDataAction).ignore();
-  m_prwTool_handle.setProperty("UsePeriodConfig",m_usePeriodConfig).ignore();
-  if (!m_periodAssignments.empty()) m_prwTool_handle.setProperty("PeriodAssignments",m_periodAssignments).ignore();
-  m_prwTool_handle.retrieve().ignore();
+  TDirectory::TContext c;
+  if (m_prwTool_handle.empty()) {
+    m_prwTool_handle = asg::AnaToolHandle<CP::IPileupReweightingTool>("CP::PileupReweightingTool/PileupReweightingTool_slot"+std::to_string(slot)+"_"+m_sysSet.name());
+    m_prwTool_handle.setProperty("OutputLevel", m_outputLevel).ignore();
+    m_prwTool_handle.setProperty("LumiCalcFiles", m_lumiCalcFiles).ignore();
+    m_prwTool_handle.setProperty("ConfigFiles", m_configFiles).ignore();
+    m_prwTool_handle.setProperty("UnrepresentedDataAction", m_unrepresentedDataAction).ignore();
+    m_prwTool_handle.setProperty("UsePeriodConfig",m_usePeriodConfig).ignore();
+    if (!m_periodAssignments.empty()) m_prwTool_handle.setProperty("PeriodAssignments",m_periodAssignments).ignore();
+    m_prwTool_handle.retrieve().ignore();
+  }
 }
 
 float AnaQ::PileupReweight::evaluate(AnaQ::Observable<xAOD::EventInfo> eventInfo) const {
