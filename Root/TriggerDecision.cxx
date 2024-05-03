@@ -11,7 +11,6 @@ void AnaQ::TriggerDecision::initialize(unsigned int slot, unsigned long long,
   if (m_trigCfgTool_handle.empty()) {
     m_trigCfgTool_handle = asg::AnaToolHandle<TrigConf::ITrigConfigTool>{
         "TrigConf::xAODConfigTool/xAODConfigTool_" + std::to_string(slot)};
-    m_trigCfgTool_handle.retrieve().ignore();
     m_trigDecTool_handle = asg::AnaToolHandle<Trig::TrigDecisionTool>{
         "Trig::TrigDecisionTool/TrigDecisionTool_" + std::to_string(slot)};
     m_trigDecTool_handle.setProperty("ConfigTool", m_trigCfgTool_handle).ignore();
@@ -24,9 +23,9 @@ void AnaQ::TriggerDecision::initialize(unsigned int slot, unsigned long long,
 bool AnaQ::TriggerDecision::evaluate(
     qty::column::observable<xAOD::EventInfo>) const {
   // eventInfo.value();
-  // if (m_trigCfgTool_handle->beginEvent() != EL::StatusCode::SUCCESS) {
-  //   // std::cout << "failed" << std::endl;
-  // }
+  if (m_trigDecTool_handle->beginEvent() != EL::StatusCode::SUCCESS) {
+    std::cout << "failed" << std::endl;
+  }
   // if (m_trigDecTool_handle->beginEvent() != EL::StatusCode::SUCCESS) {
   //   // std::cout << "failed" << std::endl;
   // };

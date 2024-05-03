@@ -24,6 +24,9 @@ class ElectronEfficiencyCorrection
   : public Column<ROOT::RVec<double>(ConstDataVector<xAOD::ElectronContainer>)>
 {
 
+private:
+  static unsigned s_nInstances;
+
 public:
   ElectronEfficiencyCorrection(Json const& sfConfig);
   ElectronEfficiencyCorrection(Json const& sfConfig,
@@ -49,6 +52,8 @@ protected:
   std::vector<std::string> m_correctionFileNameList;
 
   CP::SystematicSet m_sysSet;
+
+  unsigned int m_index;
 
   mutable asg::AnaToolHandle<IAsgElectronEfficiencyCorrectionTool>
     m_elEffCorrTool_handle; //!

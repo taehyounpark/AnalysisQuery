@@ -24,6 +24,9 @@ class ElectronSelection
   : public Column<ConstDataVector<xAOD::ElectronContainer>(
       ConstDataVector<xAOD::ElectronContainer>)>
 {
+private:
+  static unsigned s_nInstances;
+
 public:
   ElectronSelection(const Json& cfg);
   ~ElectronSelection() = default;
@@ -46,6 +49,8 @@ protected:
 
   std::string m_idWorkingPoint;
   std::unique_ptr<SG::AuxElement::ConstAccessor<char>> m_passId;
+
+  unsigned m_index;
 };
 
 } // namespace AnaQ
