@@ -75,7 +75,7 @@ void AnaQ::GlobalTriggerScaleFactor::initialize(unsigned int slot,
         m_sysSet.name() + "_" + std::to_string(slot));
     // HARDCODED FOR NOW
     m_trigGlobalTool_handle.setProperty("TriggerCombination2022",
-                                        m_elecTriggers[0]);
+                                        m_elecTriggers[0]).ignore();
     m_trigGlobalTool_handle
         .setProperty("ElectronEfficiencyTools", m_elecEffTools_handleArray)
         .ignore();
@@ -118,8 +118,10 @@ double AnaQ::GlobalTriggerScaleFactor::evaluate(
   std::vector<xAOD::Electron const *> triggeringElectrons(electrons->begin(),
                                                           electrons->end());
   double globTrigSF = 1.0;
-  auto status = m_trigGlobalTool_handle->getEfficiencyScaleFactor(
-      triggeringElectrons, globTrigSF);
+  if (m_trigGlobalTool_handle->getEfficiencyScaleFactor(
+      triggeringElectrons, globTrigSF) != EL::StatusCode::SUCCESS) {
+        throw std::runtime_error("cannot calculate global trigger scale factor");
+  }
   return globTrigSF;
 }
 
