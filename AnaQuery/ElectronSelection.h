@@ -9,6 +9,7 @@
 #include "ElectronPhotonSelectorTools/LikelihoodEnums.h"
 #include "ElectronPhotonSelectorTools/egammaPIDdefs.h"
 
+#include "AsgTools/AnaToolHandle.h"
 #include "IsolationSelection/IsolationSelectionTool.h"
 
 #include "AthContainers/ConstDataVector.h"
@@ -24,9 +25,6 @@ class ElectronSelection
   : public Column<ConstDataVector<xAOD::ElectronContainer>(
       ConstDataVector<xAOD::ElectronContainer>)>
 {
-private:
-  static unsigned s_nInstances;
-
 public:
   ElectronSelection(const Json& cfg);
   ~ElectronSelection() = default;
@@ -44,13 +42,12 @@ protected:
   double m_minPt;
   double m_maxEta;
 
-  std::unique_ptr<CP::IsolationSelectionTool> m_isolationTool; //!
+  asg::AnaToolHandle<CP::IsolationSelectionTool> m_isolationTool_handle; //!
   std::string m_isoWorkingPoint;
 
   std::string m_idWorkingPoint;
   std::unique_ptr<SG::AuxElement::ConstAccessor<char>> m_passId;
 
-  unsigned m_index;
 };
 
 } // namespace AnaQ

@@ -22,18 +22,6 @@ namespace AnaQ {
 
 class TriggerDecision : public EventDecision<bool> {
 
-private:
-class xAODConfigTool : public TrigConf::xAODConfigTool {
-
-public:
-   // Inherit all constructors from the base class
-   using TrigConf::xAODConfigTool::xAODConfigTool;
-
-   // Make the beginEvent() function publicly accessible.
-   using TrigConf::xAODConfigTool::beginEvent;
-
-}; // class xAODConfigTool
-
 public:
   TriggerDecision(const std::string& triggerSelection);
   virtual ~TriggerDecision() = default;
@@ -45,9 +33,6 @@ public:
 protected:
   mutable asg::AnaToolHandle<TrigConf::ITrigConfigTool>  m_trigCfgTool_handle; //!
   mutable asg::AnaToolHandle<Trig::TrigDecisionTool> m_trigDecTool_handle; //!
-
-  // ToolHandle<TrigConf::ITrigConfigTool> configHandle; //!
-  // mutable std::unique_ptr<Trig::TrigDecisionTool> m_decisionTool; //!
 
   std::string m_triggerSelection;
 

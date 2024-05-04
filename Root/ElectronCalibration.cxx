@@ -8,8 +8,6 @@
 
 #include "TDirectory.h"
 
-unsigned AnaQ::ElectronCalibration::s_nInstances = 0;
-
 AnaQ::ElectronCalibration::ElectronCalibration(
     Json const &calibCfg, CP::SystematicVariation const &sysVar)
     : ObjectCalibration<xAOD::ElectronContainer>::ObjectCalibration(sysVar) {
@@ -20,40 +18,34 @@ AnaQ::ElectronCalibration::ElectronCalibration(
   m_applyIsolationCorrection =
       calibCfg.value("applyIsolationCorrection", false);
   m_randomRunNumber = calibCfg.value("randomRunNumber", -1);
-  m_index = s_nInstances++;
 }
 
 void AnaQ::ElectronCalibration::initialize(unsigned int slot,
                                            unsigned long long,
                                            unsigned long long) {
-  TDirectory::TContext c;
   // CP::EgammaCalibrationAndSmearingTool
-  if (!m_p4CorrTool) {
-    const auto p4CorrToolName = "EgammaCalibrationAndSmearingTool_" +
-                                m_sysSet.name() + "_" +
-                                std::to_string(m_index);
-    m_p4CorrTool =
-        std::make_unique<CP::EgammaCalibrationAndSmearingTool>(p4CorrToolName);
-    m_p4CorrTool->msg().setLevel(MSG::ERROR); // DEBUG, VERBOSE, INFO
-    m_p4CorrTool->setProperty("ESModel", m_esModel).ignore();
-    m_p4CorrTool->setProperty("decorrelationModel", m_decorrelationModel)
+  if (!m_p4CorrTool.isUserConfigured()) {
+    m_p4CorrTool = asg::AnaToolHandle<CP::EgammaCalibrationAndSmearingTool>(
+        "CP::EgammaCalibrationAndSmearingTool/"
+        "EgammaCalibrationAndSmearingTool_" +
+        m_sysSet.name() + "_" + std::to_string(slot));
+    m_p4CorrTool.setProperty("ESModel", m_esModel).ignore();
+    m_p4CorrTool.setProperty("decorrelationModel", m_decorrelationModel)
         .ignore();
-    m_p4CorrTool->setProperty("useFastSim", (int)m_useFastSim).ignore();
+    m_p4CorrTool.setProperty("useFastSim", (int)m_useFastSim).ignore();
     if (m_randomRunNumber >= 0)
-      m_p4CorrTool->setProperty("randomRunNumber", m_randomRunNumber).ignore();
-    m_p4CorrTool->initialize().ignore();
+      m_p4CorrTool.setProperty("randomRunNumber", m_randomRunNumber).ignore();
+    m_p4CorrTool.retrieve().ignore();
     m_p4CorrTool->applySystematicVariation(m_sysSet).ignore();
   }
 
   // CP::IsolationCorrectionTool
-  if (!m_isoCorrTool) {
-    const auto isoCorrToolName = "IsolationCorrectionTool_" + m_sysSet.name() +
-                                 "_" + std::to_string(m_index);
-    m_isoCorrTool =
-        std::make_unique<CP::IsolationCorrectionTool>(isoCorrToolName);
-    m_isoCorrTool->msg().setLevel(MSG::INFO); // DEBUG, VERBOSE, INFO
-    m_isoCorrTool->setProperty("IsMC", true).ignore();
-    m_isoCorrTool->initialize().ignore();
+  if (!m_isoCorrTool.isUserConfigured()) {
+    m_isoCorrTool = asg::AnaToolHandle<CP::IsolationCorrectionTool>(
+        "CP::IsolationCorrectionTool/IsolationCorrectionTool_" +
+        m_sysSet.name() + "_" + std::to_string(slot));
+    m_isoCorrTool.setProperty("IsMC", true).ignore();
+    m_isoCorrTool.retrieve().ignore();
   }
 }
 
@@ -103,5 +95,5 @@ ConstDataVector<xAOD::ElectronContainer> AnaQ::ElectronCalibration::evaluate(
 }
 
 void AnaQ::ElectronCalibration::finalize(unsigned int) {
-  this->m_shallowCopy = {};
+  // this->m_shallowCopy = {};
 }

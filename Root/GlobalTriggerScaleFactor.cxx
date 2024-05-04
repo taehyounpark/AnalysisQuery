@@ -1,7 +1,5 @@
 #include "AnaQuery/GlobalTriggerScaleFactor.h"
 
-#include "TDirectory.h"
-
 AnaQ::GlobalTriggerScaleFactor::GlobalTriggerScaleFactor(
     nlohmann::json const &sfCfg, CP::SystematicVariation const &sysVar)
     : m_sysSet(std::vector<CP::SystematicVariation>{sysVar}) {
@@ -17,21 +15,27 @@ AnaQ::GlobalTriggerScaleFactor::GlobalTriggerScaleFactor(
   }
   m_outputLevel =
       sfCfg["TrigGlobalEfficiencyCorrection"].value("outputLevel", 1);
-  m_index = s_nInstances++;
 }
 
 void AnaQ::GlobalTriggerScaleFactor::initialize(unsigned int slot,
                                                 unsigned long long,
                                                 unsigned long long) {
-  if (m_trigGlobalTool_handle.empty()) {
-    for (auto const &elecTrig : m_elecTriggers) {
-      TDirectory::TContext c;
-      m_elecEffTools_handles.emplace_back(
+
+  // electron efficiency correction tools
+  const auto nElecTriggers = m_elecTriggers.size();
+  m_elecEffTools_handles.resize(nElecTriggers);
+  m_elecSFTools_handles.resize(nElecTriggers);
+  m_elecEffTools_handleArray.resize(nElecTriggers);
+  m_elecSFTools_handleArray.resize(nElecTriggers);
+  for (unsigned itrig = 0; itrig < nElecTriggers; ++itrig) {
+    auto const &elecTrig = m_elecTriggers[itrig];
+
+    auto &elecEffTool_handle = m_elecEffTools_handles[itrig];
+    if (!elecEffTool_handle.isUserConfigured()) {
+      elecEffTool_handle.setTypeAndName(
           "AsgElectronEfficiencyCorrectionTool/"
           "ElectronEfficiencyCorrection_efficiency_" +
-          elecTrig + "_" + m_sysSet.name() + "_" + std::to_string(slot) + "_" +
-          std::to_string(m_index));
-      auto &elecEffTool_handle = m_elecEffTools_handles.back();
+          elecTrig + "_" + m_sysSet.name() + "_" + std::to_string(slot));
       elecEffTool_handle
           .setProperty("CorrectionFileNameList",
                        m_elecEffCorrectionFileNameList[elecTrig])
@@ -39,17 +43,14 @@ void AnaQ::GlobalTriggerScaleFactor::initialize(unsigned int slot,
       elecEffTool_handle.setProperty("CorrelationModel", m_elecCorrelationModel)
           .ignore();
       elecEffTool_handle.retrieve().ignore();
-      m_elecEffTools_handleArray.emplace_back(elecEffTool_handle.getHandle());
     }
 
-    for (auto const &elecTrig : m_elecTriggers) {
-      TDirectory::TContext c;
-      m_elecSFTools_handles.emplace_back(
+    auto &elecSFTool_handle = m_elecSFTools_handles[itrig];
+    if (!elecSFTool_handle.isUserConfigured()) {
+      elecSFTool_handle.setTypeAndName(
           "AsgElectronEfficiencyCorrectionTool/"
           "ElectronEfficiencyCorrection_efficiencySF_" +
-          elecTrig + "_" + m_sysSet.name() + "_" + std::to_string(slot) + "_" +
-          std::to_string(m_index));
-      auto &elecSFTool_handle = m_elecSFTools_handles.back();
+          elecTrig + "_" + m_sysSet.name() + "_" + std::to_string(slot));
       elecSFTool_handle
           .setProperty("CorrectionFileNameList",
                        m_elecSFCorrectionFileNameList[elecTrig])
@@ -57,23 +58,23 @@ void AnaQ::GlobalTriggerScaleFactor::initialize(unsigned int slot,
       elecSFTool_handle.setProperty("CorrelationModel", m_elecCorrelationModel)
           .ignore();
       elecSFTool_handle.retrieve().ignore();
-      m_elecSFTools_handleArray.emplace_back(elecSFTool_handle.getHandle());
     }
+    m_elecEffTools_handleArray[itrig] = elecEffTool_handle.getHandle();
+    m_elecSFTools_handleArray[itrig] = elecSFTool_handle.getHandle();
+  }
 
-    if (!applySystematicVariation(m_sysSet)) {
-      throw std::runtime_error("Failed to apply systematic variation '" +
-                               m_sysSet.name() + "'");
-    }
+  // apply systematic variation on any of the electron/muon/photon eff/SF tools
+  if (!this->applySystematicVariation(m_sysSet)) {
+    throw std::runtime_error("Failed to apply systematic variation '" +
+                             m_sysSet.name() + "'");
+  }
 
-    TDirectory::TContext c;
-    m_trigGlobalTool_handle = asg::AnaToolHandle<
-        ITrigGlobalEfficiencyCorrectionTool>(
+  if (!m_trigGlobalTool_handle.isUserConfigured()) {
+    m_trigGlobalTool_handle.setTypeAndName(
         "TrigGlobalEfficiencyCorrectionTool/TrigGlobalEfficiencyCorrection_" +
-        std::to_string(slot) + "_" + std::to_string(s_nInstances));
+        m_sysSet.name() + "_" + std::to_string(slot));
     // HARDCODED FOR NOW
     m_trigGlobalTool_handle.setProperty("TriggerCombination2022",
-                                        m_elecTriggers[0]);
-    m_trigGlobalTool_handle.setProperty("TriggerCombination2023",
                                         m_elecTriggers[0]);
     m_trigGlobalTool_handle
         .setProperty("ElectronEfficiencyTools", m_elecEffTools_handleArray)

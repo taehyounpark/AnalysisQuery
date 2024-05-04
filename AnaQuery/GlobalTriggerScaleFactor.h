@@ -26,9 +26,6 @@ class GlobalTriggerScaleFactor
   : public Column<double(ConstDataVector<xAOD::ElectronContainer>)>
 {
 
-private:
-  static unsigned s_nInstances;
-
 public:
   GlobalTriggerScaleFactor(nlohmann::json const& sfCfg,
                            CP::SystematicVariation const& sysVar = {});
@@ -71,10 +68,6 @@ protected:
     m_elecEffCorrectionFileNameList;
   std::map<std::string, std::vector<std::string>>
     m_elecSFCorrectionFileNameList;
-
-  unsigned int m_index;
 };
 
 } // namespace AnaQ
-
-inline unsigned AnaQ::GlobalTriggerScaleFactor::s_nInstances = 0;

@@ -2,12 +2,9 @@
 
 #include "TDirectory.h"
 
-unsigned AnaQ::ElectronEfficiencyCorrection::s_nInstances = 0;
-
 AnaQ::ElectronEfficiencyCorrection::ElectronEfficiencyCorrection(
     Json const &sfConfig)
     : m_sysSet({}) {
-  m_index = s_nInstances++;
   m_toolName = sfConfig.value("toolName", "ElectronEfficiencyCorrectionTool");
   m_simulationFlavour = sfConfig.value("simulationFlavour", 1);
   m_idWorkingPoint = sfConfig.value("idWorkingPoint", "");
@@ -21,16 +18,16 @@ AnaQ::ElectronEfficiencyCorrection::ElectronEfficiencyCorrection(
     correctionFileName = PathResolverFindCalibFile(correctionFileName);
   }
   if (!m_idWorkingPoint.empty()) {
-    m_toolName += ("_pid_" + m_idWorkingPoint);
+    m_toolName += ("_ID_" + m_idWorkingPoint);
   }
   if (!m_isoWorkingPoint.empty()) {
-    m_toolName += ("_iso_" + m_isoWorkingPoint);
+    m_toolName += ("_Iso_" + m_isoWorkingPoint);
   }
   if (!m_recoWorkingPoint.empty()) {
-    m_toolName += ("_reco_" + m_trigWorkingPoint);
+    m_toolName += ("_Reco_" + m_trigWorkingPoint);
   }
   if (!m_trigWorkingPoint.empty()) {
-    m_toolName += ("_trig_" + m_trigWorkingPoint);
+    m_toolName += ("_Trigger_" + m_trigWorkingPoint);
   }
 }
 
@@ -44,18 +41,17 @@ AnaQ::ElectronEfficiencyCorrection::ElectronEfficiencyCorrection(
 void AnaQ::ElectronEfficiencyCorrection::initialize(unsigned int slot,
                                                     unsigned long long,
                                                     unsigned long long) {
-  if (m_elEffCorrTool_handle.empty()) {
-    TDirectory::TContext c;
-    m_elEffCorrTool_handle =
-        asg::AnaToolHandle<IAsgElectronEfficiencyCorrectionTool>{
-            "AsgElectronEfficiencyCorrectionTool/" + m_toolName + "_slot" +
-            std::to_string(m_index)};
+  if (!m_elEffCorrTool_handle.isUserConfigured()) {
+    m_elEffCorrTool_handle.setTypeAndName("AsgElectronEfficiencyCorrectionTool/" +
+                                          m_toolName + "_" +
+                                          std::to_string(slot));
     m_elEffCorrTool_handle.setProperty("ForceDataType", m_simulationFlavour)
         .ignore();
     m_elEffCorrTool_handle.setProperty("CorrelationModel", m_correlationModel)
         .ignore();
     // m_elEffCorrTool_handle->setProperty("IdKey", m_idWorkingPoint).ignore();
-    // m_elEffCorrTool_handle->setProperty("IsoKey", m_isoWorkingPoint).ignore();
+    // m_elEffCorrTool_handle->setProperty("IsoKey",
+    // m_isoWorkingPoint).ignore();
     // m_elEffCorrTool_handle->setProperty("RecoKey",
     // m_recoWorkingPoint).ignore();
     // m_elEffCorrTool_handle->setProperty("TriggerKey",
