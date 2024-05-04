@@ -10,7 +10,7 @@
 #include "xAODEgamma/Electron.h"
 #include "xAODEgamma/ElectronContainer.h"
 
-#include "queryosity.h"
+#include <queryosity.hpp>
 
 namespace AnaQ {
 

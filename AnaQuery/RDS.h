@@ -8,7 +8,7 @@
 #include <ROOT/RDataSource.hxx>
 #include <ROOT/RVec.hxx>
 
-#include "queryosity.h"
+#include <queryosity.hpp>
 
 namespace AnaQ {
 

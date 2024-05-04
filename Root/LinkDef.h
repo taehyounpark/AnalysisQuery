@@ -2,7 +2,7 @@
 #include "AnaQuery/Tree.h"
 #include "AnaQuery/Hist.h"
 
-#include "queryosity.h"
+#include <queryosity.hpp>
 
 #ifdef __CINT__
 

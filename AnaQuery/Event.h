@@ -14,7 +14,7 @@
 #include "xAODRootAccess/TEvent.h"
 #include "xAODRootAccess/TStore.h"
 
-#include "queryosity.h"
+#include <queryosity.hpp>
 
 namespace AnaQ {
 

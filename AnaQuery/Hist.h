@@ -9,7 +9,7 @@
 #include "TH3.h"
 #include <ROOT/RVec.hxx>
 
-#include "queryosity.h"
+#include <queryosity.hpp>
 
 namespace AnaQ {
 

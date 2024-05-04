@@ -15,7 +15,7 @@
 #include "xAODCore/ShallowCopy.h"
 #include "xAODEventInfo/EventInfo.h"
 
-#include "queryosity.h"
+#include <queryosity.hpp>
 
 namespace AnaQ {
 

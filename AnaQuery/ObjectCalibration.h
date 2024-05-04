@@ -15,7 +15,7 @@
 #include "xAODBase/IParticleHelpers.h"
 #include "xAODCore/ShallowCopy.h"
 
-#include "queryosity.h"
+#include <queryosity.hpp>
 
 namespace AnaQ {
 

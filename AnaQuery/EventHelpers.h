@@ -25,7 +25,7 @@
 
 #include "PathResolver/PathResolver.h"
 
-#include "queryosity.h"
+#include <queryosity.hpp>
 
 #include <nlohmann/json.hpp>
 

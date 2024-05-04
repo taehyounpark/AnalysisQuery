@@ -1,7 +1,7 @@
 #include "AnaQuery/Hist.h"
 #include "AnaQuery/Tree.h"
 
-#include "queryosity.h"
+#include <queryosity.hpp>
 
 namespace qty = queryosity;
 using dataflow = qty::dataflow;

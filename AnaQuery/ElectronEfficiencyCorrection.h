@@ -16,7 +16,7 @@
 #include "PATInterfaces/SystematicVariation.h"
 #include "PATInterfaces/SystematicsUtil.h"
 
-#include "queryosity.h"
+#include <queryosity.hpp>
 
 namespace AnaQ {
 

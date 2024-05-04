@@ -15,7 +15,7 @@
 #include "TTreeReaderArray.h"
 #include "TTreeReaderValue.h"
 
-#include "queryosity.h"
+#include <queryosity.hpp>
 
 namespace AnaQ {
 
