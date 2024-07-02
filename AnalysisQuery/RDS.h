@@ -10,8 +10,6 @@
 
 #include <queryosity.hpp>
 
-namespace AnaQ {
-
 class RDS : public queryosity::dataset::reader<RDS> {
 
 private:
@@ -57,10 +55,8 @@ protected:
   T **m_cursor;
 };
 
-}
-
 template <typename T>
-std::unique_ptr<AnaQ::RDS::Column<T>> AnaQ::RDS::read(unsigned int slot,
+std::unique_ptr<RDS::Column<T>> RDS::read(unsigned int slot,
                                           const std::string &name) {
   auto columnReaders = m_rds->GetColumnReaders<T>(name.c_str());
   return std::make_unique<Column<T>>(columnReaders[slot]);

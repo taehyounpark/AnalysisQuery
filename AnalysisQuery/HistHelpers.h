@@ -11,8 +11,6 @@
 #include "TH2F.h"
 #include "TH3F.h"
 
-namespace AnaQ {
-
 namespace HistHelpers {
 
 template <unsigned int Dim, typename Prec>
@@ -135,5 +133,3 @@ std::shared_ptr<TH1> makeHist(size_t nxbins, double xmin, double xmax,
 }
 
 } // namespace HistHelpers
-
-} // namespace AnaQ

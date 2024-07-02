@@ -1,19 +1,19 @@
-#include "AnaQuery/Tree.h"
+#include "AnalysisQuery/TreeData.h"
 
 #include "TROOT.h"
 #include "TTreeReader.h"
 #include "TTreeReaderArray.h"
 #include "TTreeReaderValue.h"
 
-AnaQ::Tree::Tree(const std::vector<std::string> &inputFiles,
+TreeData::TreeData(const std::vector<std::string> &inputFiles,
            const std::string &treeName)
     : m_inputFiles(inputFiles), m_treeName(treeName) {}
 
-AnaQ::Tree::Tree(std::initializer_list<std::string> inputFiles,
+TreeData::TreeData(std::initializer_list<std::string> inputFiles,
            const std::string &treeName)
     : m_inputFiles(inputFiles), m_treeName(treeName) {}
 
-void AnaQ::Tree::parallelize(unsigned int nslots) {
+void TreeData::parallelize(unsigned int nslots) {
   m_trees.resize(nslots);
   m_treeReaders.resize(nslots);
   for (unsigned int islot = 0; islot < nslots; ++islot) {
@@ -30,7 +30,7 @@ void AnaQ::Tree::parallelize(unsigned int nslots) {
 }
 
 std::vector<std::pair<unsigned long long, unsigned long long>>
-AnaQ::Tree::partition() {
+TreeData::partition() {
   ROOT::EnableThreadSafety();
   // ROOT::EnableImplicitMT(m_nslots);
 
@@ -69,15 +69,15 @@ AnaQ::Tree::partition() {
   return parts;
 }
 
-void AnaQ::Tree::initialize(unsigned int slot, unsigned long long begin,
+void TreeData::initialize(unsigned int slot, unsigned long long begin,
                       unsigned long long end) {
   m_treeReaders[slot]->SetEntriesRange(begin, end);
 }
 
-void AnaQ::Tree::execute(unsigned int slot, unsigned long long entry) {
+void TreeData::execute(unsigned int slot, unsigned long long entry) {
   m_treeReaders[slot]->SetEntry(entry);
 }
 
-void AnaQ::Tree::finalize(unsigned int) {
+void TreeData::finalize(unsigned int) {
   // m_treeReaders[slot].reset(nullptr);
 }

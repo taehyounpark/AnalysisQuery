@@ -1,4 +1,4 @@
-#include "AnaQuery/ElectronCalibration.h"
+#include "AnalysisQuery/ElectronCalibration.h"
 
 #include <iostream>
 
@@ -8,7 +8,7 @@
 
 #include "TDirectory.h"
 
-AnaQ::ElectronCalibration::ElectronCalibration(
+ElectronCalibration::ElectronCalibration(
     Json const &calibCfg, CP::SystematicVariation const &sysVar)
     : ObjectCalibration<xAOD::ElectronContainer>::ObjectCalibration(sysVar) {
   m_esModel = calibCfg["esModel"].get<std::string>();
@@ -20,7 +20,7 @@ AnaQ::ElectronCalibration::ElectronCalibration(
   m_randomRunNumber = calibCfg.value("randomRunNumber", -1);
 }
 
-void AnaQ::ElectronCalibration::initialize(unsigned int slot,
+void ElectronCalibration::initialize(unsigned int slot,
                                            unsigned long long,
                                            unsigned long long) {
   // CP::EgammaCalibrationAndSmearingTool
@@ -49,7 +49,7 @@ void AnaQ::ElectronCalibration::initialize(unsigned int slot,
   }
 }
 
-ConstDataVector<xAOD::ElectronContainer> AnaQ::ElectronCalibration::evaluate(
+ConstDataVector<xAOD::ElectronContainer> ElectronCalibration::evaluate(
     qty::column::observable<xAOD::ElectronContainer> elCont) const {
   ConstDataVector<xAOD::ElectronContainer> calibratedElectrons;
 
@@ -94,6 +94,6 @@ ConstDataVector<xAOD::ElectronContainer> AnaQ::ElectronCalibration::evaluate(
   return calibElCont;
 }
 
-void AnaQ::ElectronCalibration::finalize(unsigned int) {
+void ElectronCalibration::finalize(unsigned int) {
   // this->m_shallowCopy = {};
 }

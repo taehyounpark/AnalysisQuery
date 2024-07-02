@@ -1,8 +1,8 @@
-#include "AnaQuery/ElectronEfficiencyCorrection.h"
+#include "AnalysisQuery/ElectronEfficiencyCorrection.h"
 
 #include "TDirectory.h"
 
-AnaQ::ElectronEfficiencyCorrection::ElectronEfficiencyCorrection(
+ElectronEfficiencyCorrection::ElectronEfficiencyCorrection(
     Json const &sfConfig)
     : m_sysSet({}) {
   m_toolName = sfConfig.value("toolName", "ElectronEfficiencyCorrectionTool");
@@ -31,14 +31,14 @@ AnaQ::ElectronEfficiencyCorrection::ElectronEfficiencyCorrection(
   }
 }
 
-AnaQ::ElectronEfficiencyCorrection::ElectronEfficiencyCorrection(
+ElectronEfficiencyCorrection::ElectronEfficiencyCorrection(
     Json const &sfConfig, CP::SystematicVariation const &sysVar)
     : ElectronEfficiencyCorrection(sfConfig) {
   m_sysSet = std::vector<CP::SystematicVariation>{sysVar};
   m_toolName += ("_" + m_sysSet.name());
 }
 
-void AnaQ::ElectronEfficiencyCorrection::initialize(unsigned int slot,
+void ElectronEfficiencyCorrection::initialize(unsigned int slot,
                                                     unsigned long long,
                                                     unsigned long long) {
   if (!m_elEffCorrTool_handle.isUserConfigured()) {
@@ -63,8 +63,8 @@ void AnaQ::ElectronEfficiencyCorrection::initialize(unsigned int slot,
   }
 }
 
-ROOT::RVec<double> AnaQ::ElectronEfficiencyCorrection::evaluate(
-    AnaQ::Observable<ConstDataVector<xAOD::ElectronContainer>> electrons)
+ROOT::RVec<double> ElectronEfficiencyCorrection::evaluate(
+    Observable<ConstDataVector<xAOD::ElectronContainer>> electrons)
     const {
   if (m_elEffCorrTool_handle->applySystematicVariation(m_sysSet) !=
       EL::StatusCode::SUCCESS) {
@@ -93,4 +93,4 @@ ROOT::RVec<double> AnaQ::ElectronEfficiencyCorrection::evaluate(
   return effSFs;
 }
 
-void AnaQ::ElectronEfficiencyCorrection::finalize(unsigned int) {}
+void ElectronEfficiencyCorrection::finalize(unsigned int) {}

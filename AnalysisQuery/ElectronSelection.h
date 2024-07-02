@@ -19,7 +19,7 @@
 #include "xAODEgamma/ElectronContainer.h"
 #include "xAODEventInfo/EventInfo.h"
 
-namespace AnaQ {
+
 
 class ElectronSelection
   : public Column<ConstDataVector<xAOD::ElectronContainer>(
@@ -49,5 +49,3 @@ protected:
   std::unique_ptr<SG::AuxElement::ConstAccessor<char>> m_passId;
 
 };
-
-} // namespace AnaQ

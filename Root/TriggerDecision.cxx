@@ -1,9 +1,9 @@
-#include "AnaQuery/TriggerDecision.h"
+#include "AnalysisQuery/TriggerDecision.h"
 
-AnaQ::TriggerDecision::TriggerDecision(const std::string &triggerSelection)
+TriggerDecision::TriggerDecision(const std::string &triggerSelection)
     : m_triggerSelection(triggerSelection) {}
 
-void AnaQ::TriggerDecision::initialize(unsigned int slot, unsigned long long,
+void TriggerDecision::initialize(unsigned int slot, unsigned long long,
                                        unsigned long long) {
   if (!m_trigDecTool_handle.isUserConfigured()) {
     m_trigCfgTool_handle = asg::AnaToolHandle<TrigConf::ITrigConfigTool>{
@@ -18,7 +18,7 @@ void AnaQ::TriggerDecision::initialize(unsigned int slot, unsigned long long,
   }
 }
 
-bool AnaQ::TriggerDecision::evaluate(
+bool TriggerDecision::evaluate(
     qty::column::observable<xAOD::EventInfo>) const {
   if (m_trigDecTool_handle->beginEvent() != EL::StatusCode::SUCCESS) {
     throw std::runtime_error("Failure in trigger decision tool");
@@ -28,6 +28,6 @@ bool AnaQ::TriggerDecision::evaluate(
   return m_trigDecTool_handle->getChainGroup(m_triggerSelection)->isPassed();
 }
 
-void AnaQ::TriggerDecision::finalize(unsigned int) {
+void TriggerDecision::finalize(unsigned int) {
   // m_trigDecTool_handle->finalize();
 }

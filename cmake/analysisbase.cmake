@@ -1,4 +1,4 @@
-project(AnaQuery)
+project(AnalysisQuery)
 
 find_package(
   ROOT REQUIRED
@@ -23,27 +23,26 @@ find_package(
 find_package(AnalysisBase QUIET)
 find_package(nlohmann_json REQUIRED)
 
-atlas_subdir(AnaQuery)
+atlas_subdir(AnalysisQuery)
 
 atlas_add_root_dictionary(
-  AnaQueryLib
-  AnaQueryDict
+  AnalysisQueryLib
+  AnalysisQueryDict
   ROOT_HEADERS
-  AnaQuery/*.h
+  AnalysisQuery/*.h
   Root/LinkDef.h
   EXTERNAL_PACKAGES
-  ROOT)
+  ROOT
+  )
 
 atlas_add_library(
-  AnaQueryLib
-  AnaQuery/*.h
+  AnalysisQueryLib
+  AnalysisQuery/*.h
   Root/*.h
   Root/*.cxx
-  ${AnaQueryDict}
+  ${AnalysisQueryDict}
   PUBLIC_HEADERS 
-  AnaQuery
-  INCLUDE_DIRS
-  ${ROOT_INCLUDE_DIRS}
+  AnalysisQuery
   LINK_LIBRARIES
   queryosity::queryosity
   nlohmann_json::nlohmann_json
@@ -52,11 +51,12 @@ atlas_add_library(
   AsgTools
   AnaAlgorithmLib
   EventLoop
+  PathResolver
   xAODBase
   xAODRootAccess
   xAODEventInfo
   xAODCutFlow
-  PathResolver
+  xAODCaloEvent 
   xAODTau
   xAODJet
   xAODBTagging
@@ -105,7 +105,12 @@ atlas_add_library(
   AssociationUtilsLib
   PMGToolsLib
   SystematicsHandlesLib
+  PRIVATE_INCLUDE_DIRS ${ROOT_INCLUDE_DIRS}
+  PRIVATE_LINK_LIBRARIES ${ROOT_LIBRARIES}
   )
 
 atlas_add_executable(example-daod examples/example-daod.cxx LINK_LIBRARIES
-                     AnaQueryLib queryosity::queryosity)
+                     AnalysisQueryLib queryosity::queryosity)
+
+atlas_install_python_modules( python/*.py )
+atlas_install_scripts( scripts/analyze )

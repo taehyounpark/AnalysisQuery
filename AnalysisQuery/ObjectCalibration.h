@@ -17,8 +17,6 @@
 
 #include <queryosity.hpp>
 
-namespace AnaQ {
-
 template<typename Cont>
 struct ShallowCopy
 {
@@ -41,10 +39,8 @@ protected:
   mutable ShallowCopy<Cont> m_shallowCopy; //!
 };
 
-} // namespace AnaQ
-
 template<typename Cont>
-AnaQ::ShallowCopy<Cont>::ShallowCopy(
+ShallowCopy<Cont>::ShallowCopy(
   std::pair<Cont*, xAOD::ShallowAuxContainer*> containers)
   : elements(containers.first)
   , aux(containers.second)
@@ -52,7 +48,7 @@ AnaQ::ShallowCopy<Cont>::ShallowCopy(
 }
 
 template<typename Cont>
-AnaQ::ObjectCalibration<Cont>::ObjectCalibration(
+ObjectCalibration<Cont>::ObjectCalibration(
   CP::SystematicVariation const& sysVar)
   : m_sysSet(std::vector<CP::SystematicVariation>{ sysVar })
 {

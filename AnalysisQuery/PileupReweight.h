@@ -6,8 +6,6 @@
 
 #include "AsgTools/AnaToolHandle.h"
 
-namespace AnaQ {
-
 class PileupReweight : public EventDecision<float> {
 
 public:
@@ -31,5 +29,3 @@ protected:
   CP::SystematicSet m_sysSet;
 
 };
-
-}

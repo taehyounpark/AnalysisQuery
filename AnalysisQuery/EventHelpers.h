@@ -5,7 +5,7 @@
 #include <AsgMessaging/MessageCheck.h>
 #include <RootCoreUtils/ThrowMsg.h>
 
-#include <SampleHandler/SampleHandler.h>
+// #include <SampleHandler/SampleHandler.h>
 #include <EventLoop/StatusCode.h>
 
 // jet reclustering and trimming
@@ -30,8 +30,6 @@
 #include <nlohmann/json.hpp>
 
 #include <ROOT/RVec.hxx>
-
-namespace AnaQ {
 
 using Json = nlohmann::json;
 
@@ -76,10 +74,8 @@ std::map<std::string, qty::column::definition<Def>> varyColumn(Nom const& nomCfg
 
 } // namespace EventHelpers
 
-}
-
 template <typename Cont>
-ConstDataVector<Cont> AnaQ::EventHelpers::makeConstDataVector(Cont* cont) {
+ConstDataVector<Cont> EventHelpers::makeConstDataVector(Cont* cont) {
   auto cdv = ConstDataVector<Cont>(SG::VIEW_ELEMENTS);
   cdv.reserve(cont->size());
   for (auto itr : *(cont)) {
@@ -89,7 +85,7 @@ ConstDataVector<Cont> AnaQ::EventHelpers::makeConstDataVector(Cont* cont) {
 }
 
 template <typename Def, typename Nom>
-std::map<std::string, qty::column::definition<Def>> AnaQ::EventHelpers::varyColumn(Nom const& nomCfg, AnaQ::Json const& sysCfg) {
+std::map<std::string, qty::column::definition<Def>> EventHelpers::varyColumn(Nom const& nomCfg, Json const& sysCfg) {
   std::map<std::string, qty::column::definition<Def>> colVarMap;
   auto varMap = makeSystematicVariationMap(sysCfg);
   for (auto const& [name, sysVar] : varMap) {

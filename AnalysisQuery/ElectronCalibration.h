@@ -1,6 +1,6 @@
 #pragma once
 
-#include "AnaQuery/ObjectCalibration.h"
+#include "AnalysisQuery/ObjectCalibration.h"
 
 // external tools include(s):
 #include "AsgTools/AnaToolHandle.h"
@@ -11,8 +11,6 @@
 #include "xAODEgamma/ElectronContainer.h"
 
 #include <queryosity.hpp>
-
-namespace AnaQ {
 
 class ElectronCalibration : public ObjectCalibration<xAOD::ElectronContainer> {
 
@@ -38,5 +36,3 @@ protected:
   mutable asg::AnaToolHandle<CP::EgammaCalibrationAndSmearingTool> m_p4CorrTool; //!
   mutable asg::AnaToolHandle<CP::IsolationCorrectionTool> m_isoCorrTool;         //!
 };
-
-} // namespace AnaQ

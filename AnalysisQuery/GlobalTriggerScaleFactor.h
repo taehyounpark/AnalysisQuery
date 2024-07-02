@@ -18,9 +18,7 @@
 #include "PATInterfaces/SystematicVariation.h"
 #include "PATInterfaces/SystematicsUtil.h"
 
-#include "AnaQuery/EventHelpers.h"
-
-namespace AnaQ {
+#include "AnalysisQuery/EventHelpers.h"
 
 class GlobalTriggerScaleFactor
   : public Column<double(ConstDataVector<xAOD::ElectronContainer>)>
@@ -69,5 +67,3 @@ protected:
   std::map<std::string, std::vector<std::string>>
     m_elecSFCorrectionFileNameList;
 };
-
-} // namespace AnaQ

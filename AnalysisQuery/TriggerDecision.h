@@ -1,6 +1,6 @@
 #pragma once
 
-#include "AnaQuery/EventHelpers.h"
+#include "AnalysisQuery/EventHelpers.h"
 
 // Trigger include(s).
 #include "TrigConfxAOD/xAODConfigTool.h"
@@ -16,9 +16,6 @@
 #include "xAODEventInfo/EventInfo.h"
 
 #include <queryosity.hpp>
-
-namespace AnaQ {
-
 
 class TriggerDecision : public EventDecision<bool> {
 
@@ -37,5 +34,3 @@ protected:
   std::string m_triggerSelection;
 
 };
-
-}

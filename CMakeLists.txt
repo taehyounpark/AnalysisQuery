@@ -1,5 +1,5 @@
 ################################################################################
-# AnaQuery
+# AnalysisQuery
 ################################################################################
 
 if($ENV{AnalysisBase_SET_UP})
@@ -11,7 +11,7 @@ else()
 endif()
 
 if(ANALYSISBASE_BUILD OR NOT STANDALONE_BUILD)
-  include(./cmake/analysisbase.cmake)
+include(./cmake/analysisbase.cmake)
 endif()
 
 if(STANDALONE_BUILD OR NOT ANALYSISBASE_BUILD)

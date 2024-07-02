@@ -1,0 +1,125 @@
+#!/usr/bin/env python
+
+import os 
+import argparse
+import functools
+import importlib
+
+import ROOT
+import cppyy
+from ROOT import queryosity as qty
+df = qty.dataflow()
+cppyy.cppdef('''
+using dataflow = qty::dataflow;
+namespace multithread = qty::multithread;
+namespace dataset = qty::dataset;
+namespace column = qty::column;
+namespace selection = qty::selection;
+namespace query = qty::query;
+namespace systematic = qty::systematic;
+'''
+)
+from AnalysisQuery import AnalysisFlow, TreeData, EventData
+
+def parse_arguments():
+  parser = argparse.ArgumentParser(description="Process some analysis parameters.")
+
+  # First positional argument
+  parser.add_argument('analysis', type=str, help='Name of the analysis to run')
+
+  # Optional arguments
+  parser.add_argument('--tree', type=str, default='CollectionTree', help='Name of the tree to analyze')
+  parser.add_argument('--files', nargs='*', type=str, default=[], help='List of file paths')
+  parser.add_argument('--input', type=str, help='Input JSON to specify the (tree, files) options')
+  parser.add_argument('--mt', type=int, default=0, help='Number of threads to use (default: 0)')
+  parser.add_argument('--entries', type=int, default=-1, help='Number of entries to process (default: -1)')
+  parser.add_argument('--weight', type=float, default=1.0, help='Scaling applied to all weights (default: 1.0)')
+  parser.add_argument('--configure', type=str, help='Configure the AnalysisFlow instance')
+  parser.add_argument('--force-output', action='store_true', help='Set this flag to enable fore output')
+  parser.add_argument('--output', type=str, default='analyzed.root', help='Path to the output file (default: analyzed.root)')
+
+  # parse arguments
+  args = parser.parse_args()
+
+  if (args.input):
+    import json
+    with open(args.input, 'r') as f:
+      cfg = json.load(f)
+      args.tree = cfg.get('tree')
+      args.files = cfg.get('files')
+
+  return args
+
+# Example usage
+if __name__ == '__main__':
+  args = parse_arguments()
+
+  # check if output already exists
+  output_file = args.output
+  if os.path.exists(args.output):
+    if not args.force_output:
+      raise FileExistsError(f"Output file {output_file} already exists, delete it or specify a different file path.")
+
+  # import the analysis by name
+  try:
+    get_analysis_klass = lambda base, attrs: functools.reduce(getattr, attrs, base)
+    analysis_klass = get_analysis_klass(ROOT, args.analysis.split('::'))
+    analysis = analysis_klass()
+
+  # could not import analysis
+  except ModuleNotFoundError:
+    raise ModuleNotFoundError(f"Module {module_name} not found.")
+  except AttributeError:
+      raise AttributeError(f"Module {module_name} does not have the expected attribute.")
+  except Exception as e:
+      raise RuntimeError(f"An unexpected error occurred: {e}")
+
+  # try:
+  #   package_name, module_name = args.configure.rsplit('.', 1)
+  #   package = importlib.import_module(package_name)
+  #   print(package.__dict__)
+  #   print(getattr(package, module_name))
+  #   configure = getattr(getattr(package, module_name), 'configure')
+  #   print(configure)
+  # # could not import analysis
+  # except ModuleNotFoundError:
+  #   raise ModuleNotFoundError(f"Module {module_name} not found.")
+  # except AttributeError:
+  #     raise AttributeError(f"Module {module_name} does not have the expected attribute.")
+  # except Exception as e:
+  #     raise RuntimeError(f"An unexpected error occurred: {e}") 
+
+  # try:
+  #   configure(analysis)
+  # except Exception as e:
+  #     raise RuntimeError(f"An unexpected error occurred: {e}")
+
+  # in_files = [ROOT.TFile.Open(in_file) for in_file in args.files]
+  # analysis.preprocess(in_files)
+
+  # df = qty.dataflow(qty.multithread.enable(args.mt), qty.dataset.head(args.entries))
+  cppyy.cppdef('''
+  dataflow df(multithread::enable({mt}), dataset::head({entries}), dataset::weight({weight}));
+  '''.format(
+    mt=int(args.mt),
+    entries=args.entries,
+    weight=args.weight
+  ))
+  df = cppyy.gbl.df
+
+  if isinstance(analysis, AnalysisFlow[EventData]):
+    ds = df.load(qty.dataset.input['EventData'](ROOT.std.vector['std::string'](args.files), args.tree))
+  elif isinstance(analysis, AnalysisFlow[TreeData]):
+    ds = df.load(qty.dataset.input['TreeData'](ROOT.std.vector['std::string'](args.files), args.tree))
+    
+  # run analysis
+  analysis.analyze(df, ds)
+
+  # create the output file
+  try:
+    out_file = ROOT.TFile.Open(output_file, 'RECREATE')
+  except OSError as e:
+    raise OSError(f"Failed to create output file {output_file}: {e.strerror}")
+
+  # dump results
+  analysis.output(out_file)

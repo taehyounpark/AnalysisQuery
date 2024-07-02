@@ -17,9 +17,7 @@
 
 #include <queryosity.hpp>
 
-namespace AnaQ {
-
-class Tree : public queryosity::dataset::reader<AnaQ::Tree> {
+class TreeData : public queryosity::dataset::reader<TreeData> {
 
 public:
   class Reader;
@@ -29,10 +27,10 @@ public:
   template <typename... ColumnTypes> class Snapshot;
 
 public:
-  Tree(const std::vector<std::string> &filePaths, const std::string &treeName);
-  Tree(std::initializer_list<std::string> filePaths,
+  TreeData(const std::vector<std::string> &filePaths, const std::string &treeName);
+  TreeData(std::initializer_list<std::string> filePaths,
        const std::string &treeName);
-  ~Tree() = default;
+  ~TreeData() = default;
 
   virtual void parallelize(unsigned int nslots) final override;
 
@@ -59,7 +57,7 @@ protected:
 };
 
 template <typename T>
-class Tree::Branch : public queryosity::column::reader<T> {
+class TreeData::Branch : public queryosity::column::reader<T> {
 
 public:
   Branch(const std::string &branchName, TTreeReader &treeReader)
@@ -79,7 +77,7 @@ protected:
 };
 
 template <typename T>
-class Tree::Branch<ROOT::RVec<T>>
+class TreeData::Branch<ROOT::RVec<T>>
     : public queryosity::column::reader<ROOT::RVec<T>> {
 
 public:
@@ -112,7 +110,7 @@ protected:
 };
 
 template <>
-class Tree::Branch<ROOT::RVec<bool>>
+class TreeData::Branch<ROOT::RVec<bool>>
     : public queryosity::column::reader<ROOT::RVec<bool>> {
 
 public:
@@ -143,7 +141,7 @@ protected:
 };
 
 template <typename... ColumnTypes>
-class Tree::Snapshot
+class TreeData::Snapshot
     : public queryosity::query::definition<std::shared_ptr<TTree>(
           ColumnTypes...)> {
 
@@ -193,17 +191,15 @@ protected:
   ColumnTuple_t m_columns;
 };
 
-}
-
 template <typename U>
-std::unique_ptr<AnaQ::Tree::Branch<U>> AnaQ::Tree::read(unsigned int slot,
+std::unique_ptr<TreeData::Branch<U>> TreeData::read(unsigned int slot,
                                             const std::string &branchName) {
   return std::make_unique<Branch<U>>(branchName, *m_treeReaders[slot]);
 }
 
 template <typename... ColumnTypes>
 template <typename... Names>
-AnaQ::Tree::Snapshot<ColumnTypes...>::Snapshot(const std::string &treeName,
+TreeData::Snapshot<ColumnTypes...>::Snapshot(const std::string &treeName,
                                          Names const &...columnNames)
     : m_snapshot(std::make_shared<TTree>(treeName.c_str(), treeName.c_str())),
       m_branches(makeBranches(std::index_sequence_for<ColumnTypes...>(),
@@ -212,19 +208,19 @@ AnaQ::Tree::Snapshot<ColumnTypes...>::Snapshot(const std::string &treeName,
 }
 
 template <typename... ColumnTypes>
-void AnaQ::Tree::Snapshot<ColumnTypes...>::fill(
+void TreeData::Snapshot<ColumnTypes...>::fill(
     queryosity::column::observable<ColumnTypes>... columns, double) {
   this->fillBranchs(std::index_sequence_for<ColumnTypes...>(), columns...);
   m_snapshot->Fill();
 }
 
 template <typename... ColumnTypes>
-std::shared_ptr<TTree> AnaQ::Tree::Snapshot<ColumnTypes...>::result() const {
+std::shared_ptr<TTree> TreeData::Snapshot<ColumnTypes...>::result() const {
   return m_snapshot;
 }
 
 template <typename... ColumnTypes>
-std::shared_ptr<TTree> AnaQ::Tree::Snapshot<ColumnTypes...>::merge(
+std::shared_ptr<TTree> TreeData::Snapshot<ColumnTypes...>::merge(
     std::vector<std::shared_ptr<TTree>> const &results) const {
   TList list;
   for (auto const &result : results) {

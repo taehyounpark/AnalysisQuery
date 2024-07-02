@@ -1,8 +1,8 @@
-#include "AnaQuery/PileupReweight.h"
+#include "AnalysisQuery/PileupReweight.h"
 
 #include "TDirectory.h"
 
-AnaQ::PileupReweight::PileupReweight(Json const &prwCfg,
+PileupReweight::PileupReweight(Json const &prwCfg,
                                      CP::SystematicVariation const &sysVar)
     : m_sysSet(std::vector<CP::SystematicVariation>{sysVar}) {
   m_outputLevel = prwCfg.value("outputLevel", 1);
@@ -13,7 +13,7 @@ AnaQ::PileupReweight::PileupReweight(Json const &prwCfg,
   m_periodAssignments = prwCfg.value("periodAssignments", "");
 }
 
-void AnaQ::PileupReweight::initialize(unsigned int slot, unsigned long long,
+void PileupReweight::initialize(unsigned int slot, unsigned long long,
                                       unsigned long long) {
   // resolve paths
   for (auto &filePath : m_lumiCalcFiles) {
@@ -46,8 +46,8 @@ void AnaQ::PileupReweight::initialize(unsigned int slot, unsigned long long,
   }
 }
 
-float AnaQ::PileupReweight::evaluate(
-    AnaQ::Observable<xAOD::EventInfo> eventInfo) const {
+float PileupReweight::evaluate(
+    Observable<xAOD::EventInfo> eventInfo) const {
   m_prwTool_handle->apply(*eventInfo).ignore();
   return m_prwTool_handle->getCombinedWeight(*eventInfo);
   // SG::AuxElement::Decorator<float>
@@ -65,4 +65,4 @@ float AnaQ::PileupReweight::evaluate(
   // true );
 }
 
-void AnaQ::PileupReweight::finalize(unsigned int) {}
+void PileupReweight::finalize(unsigned int) {}

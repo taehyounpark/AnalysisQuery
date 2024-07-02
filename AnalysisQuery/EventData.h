@@ -16,18 +16,16 @@
 
 #include <queryosity.hpp>
 
-namespace AnaQ {
-
-class Event : public queryosity::dataset::reader<Event> {
+class EventData : public queryosity::dataset::reader<EventData> {
 
 public:
   template <typename T> class Container;
 
 public:
-  Event(const std::vector<std::string> &inputFiles,
+  EventData(const std::vector<std::string> &inputFiles,
         const std::string &collection = "CollectionTree",
         const std::string &metadata = "MetaData");
-  ~Event() = default;
+  ~EventData() = default;
 
   virtual void parallelize(unsigned int) final override;
   virtual std::vector<std::pair<unsigned long long, unsigned long long>>
@@ -52,10 +50,8 @@ protected:
   std::vector<std::unique_ptr<xAOD::TStore>> m_store_per_slot;
 };
 
-} // namespace AnaQ
-
 template <typename T>
-class AnaQ::Event::Container : public queryosity::column::reader<T> {
+class EventData::Container : public queryosity::column::reader<T> {
 
 public:
   Container(const std::string &containerName, xAOD::TEvent &event)
@@ -78,7 +74,7 @@ protected:
 };
 
 template <typename U>
-std::unique_ptr<AnaQ::Event::Container<U>>
-AnaQ::Event::read(unsigned int slot, const std::string &containerName) const {
+std::unique_ptr<EventData::Container<U>>
+EventData::read(unsigned int slot, const std::string &containerName) const {
   return std::make_unique<Container<U>>(containerName, *m_event_per_slot[slot]);
 }

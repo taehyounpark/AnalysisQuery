@@ -1,4 +1,4 @@
-#include "AnaQuery/Event.h"
+#include "AnalysisQuery/EventData.h"
 
 #include "TROOT.h"
 
@@ -6,11 +6,11 @@
 #include "xAODCutFlow/CutBookkeeperAuxContainer.h"
 #include "xAODCutFlow/CutBookkeeperContainer.h"
 
-AnaQ::Event::Event(const std::vector<std::string> &inputFiles,
+EventData::EventData(const std::vector<std::string> &inputFiles,
                    const std::string &collection, const std::string &metadata)
     : m_inputFiles(inputFiles), m_treeName(collection), m_metaName(metadata) {}
 
-void AnaQ::Event::parallelize(unsigned int nslots) {
+void EventData::parallelize(unsigned int nslots) {
   ROOT::EnableThreadSafety();
   ROOT::EnableImplicitMT(nslots);
   xAOD::Init().ignore();
@@ -24,8 +24,6 @@ void AnaQ::Event::parallelize(unsigned int nslots) {
       tree->Add(filePath.c_str());
     }
     tree->ResetBit(kMustCleanup);
-    // auto event = std::make_unique<xAOD::TEvent>(xAOD::TEvent::kClassAccess);
-    // auto event = std::make_unique<xAOD::TEvent>(xAOD::TEvent::kAthenaAccess);
     auto event = std::make_unique<xAOD::TEvent>(xAOD::TEvent::kUndefinedAccess);
     if (event->readFrom(tree.release()).isFailure()) {
       throw std::runtime_error("failed to read event");
@@ -36,7 +34,7 @@ void AnaQ::Event::parallelize(unsigned int nslots) {
 }
 
 std::vector<std::pair<unsigned long long, unsigned long long>>
-AnaQ::Event::partition() {
+EventData::partition() {
   TDirectory::TContext c;
 
   std::vector<std::pair<unsigned long long, unsigned long long>> parts;
@@ -70,19 +68,19 @@ AnaQ::Event::partition() {
   return parts;
 }
 
-void AnaQ::Event::initialize(unsigned int slot, unsigned long long,
+void EventData::initialize(unsigned int slot, unsigned long long,
                              unsigned long long) {
   m_event_per_slot[slot]->setActive();
   m_store_per_slot[slot]->setActive();
 }
 
-void AnaQ::Event::execute(unsigned int slot, unsigned long long entry) {
+void EventData::execute(unsigned int slot, unsigned long long entry) {
   m_store_per_slot[slot]->clear();
   if (m_event_per_slot[slot]->getEntry(entry) < 0) {
     throw std::runtime_error("failed to get entry");
   }
 }
 
-void AnaQ::Event::finalize(unsigned int) {
+void EventData::finalize(unsigned int) {
   // nothing to do
 }

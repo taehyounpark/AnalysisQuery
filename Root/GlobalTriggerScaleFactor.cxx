@@ -1,6 +1,6 @@
-#include "AnaQuery/GlobalTriggerScaleFactor.h"
+#include "AnalysisQuery/GlobalTriggerScaleFactor.h"
 
-AnaQ::GlobalTriggerScaleFactor::GlobalTriggerScaleFactor(
+GlobalTriggerScaleFactor::GlobalTriggerScaleFactor(
     nlohmann::json const &sfCfg, CP::SystematicVariation const &sysVar)
     : m_sysSet(std::vector<CP::SystematicVariation>{sysVar}) {
   auto const &elecCfg = sfCfg["ElectronEfficiencyCorrection"];
@@ -17,7 +17,7 @@ AnaQ::GlobalTriggerScaleFactor::GlobalTriggerScaleFactor(
       sfCfg["TrigGlobalEfficiencyCorrection"].value("outputLevel", 1);
 }
 
-void AnaQ::GlobalTriggerScaleFactor::initialize(unsigned int slot,
+void GlobalTriggerScaleFactor::initialize(unsigned int slot,
                                                 unsigned long long,
                                                 unsigned long long) {
 
@@ -87,7 +87,7 @@ void AnaQ::GlobalTriggerScaleFactor::initialize(unsigned int slot,
   }
 }
 
-double AnaQ::GlobalTriggerScaleFactor::evaluate(
+double GlobalTriggerScaleFactor::evaluate(
     Observable<ConstDataVector<xAOD::ElectronContainer>> electrons) const {
   // run electron trigger efficiency & SF tools
   for (auto elItr : *(electrons)) {
@@ -125,9 +125,9 @@ double AnaQ::GlobalTriggerScaleFactor::evaluate(
   return globTrigSF;
 }
 
-void AnaQ::GlobalTriggerScaleFactor::finalize(unsigned int) {}
+void GlobalTriggerScaleFactor::finalize(unsigned int) {}
 
-bool AnaQ::GlobalTriggerScaleFactor::applySystematicVariation(
+bool GlobalTriggerScaleFactor::applySystematicVariation(
     CP::SystematicSet const &sysSet) {
   bool sysCode;
   for (auto &elecEffTool_handle : m_elecEffTools_handleArray) {

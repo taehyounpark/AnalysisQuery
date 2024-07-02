@@ -1,13 +1,13 @@
-#include "AnaQuery/ElectronSelection.h"
+#include "AnalysisQuery/ElectronSelection.h"
 
-AnaQ::ElectronSelection::ElectronSelection(const Json& cfg) {
+ElectronSelection::ElectronSelection(const Json& cfg) {
   m_minPt = cfg.value("minPt",0.0);
   m_maxEta = cfg.value("maxEta",10.0);
   m_isoWorkingPoint = cfg["isoWorkingPoint"].get<std::string>();
   m_idWorkingPoint = cfg["idWorkingPoint"].get<std::string>();
 }
 
-void AnaQ::ElectronSelection::initialize(unsigned int slot, unsigned long long, unsigned long long) {
+void ElectronSelection::initialize(unsigned int slot, unsigned long long, unsigned long long) {
   m_passId = std::make_unique<SG::AuxElement::ConstAccessor<char>>("DFCommonElectrons"+m_idWorkingPoint);
   if (!m_isolationTool_handle.isUserConfigured()) {
     m_isolationTool_handle.setTypeAndName("CP::IsolationSelectionTool/IsolationSelectionTool_"+m_isoWorkingPoint+"_"+std::to_string(slot));
@@ -16,7 +16,7 @@ void AnaQ::ElectronSelection::initialize(unsigned int slot, unsigned long long, 
   }
 }
 
-ConstDataVector<xAOD::ElectronContainer> AnaQ::ElectronSelection::evaluate(AnaQ::Observable<ConstDataVector<xAOD::ElectronContainer>> allElectrons) const
+ConstDataVector<xAOD::ElectronContainer> ElectronSelection::evaluate(Observable<ConstDataVector<xAOD::ElectronContainer>> allElectrons) const
 {
   ConstDataVector<xAOD::ElectronContainer> selectedElectrons(SG::VIEW_ELEMENTS);
   for (auto elecItr : *allElectrons) {
@@ -33,6 +33,6 @@ ConstDataVector<xAOD::ElectronContainer> AnaQ::ElectronSelection::evaluate(AnaQ:
   return selectedElectrons;
 }
 
-void AnaQ::ElectronSelection::finalize(unsigned int) {
+void ElectronSelection::finalize(unsigned int) {
   // m_isolationTool_handle.reset();
 }

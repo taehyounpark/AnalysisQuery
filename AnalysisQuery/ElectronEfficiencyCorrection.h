@@ -1,6 +1,6 @@
 #pragma once
 
-#include "AnaQuery/EventHelpers.h"
+#include "AnalysisQuery/EventHelpers.h"
 
 // EDM
 #include "xAODEgamma/ElectronContainer.h"
@@ -17,8 +17,6 @@
 #include "PATInterfaces/SystematicsUtil.h"
 
 #include <queryosity.hpp>
-
-namespace AnaQ {
 
 class ElectronEfficiencyCorrection
   : public Column<ROOT::RVec<double>(ConstDataVector<xAOD::ElectronContainer>)>
@@ -53,5 +51,3 @@ protected:
   mutable asg::AnaToolHandle<IAsgElectronEfficiencyCorrectionTool>
     m_elEffCorrTool_handle; //!
 };
-
-}

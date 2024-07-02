@@ -1,7 +1,7 @@
-#include "AnaQuery/EventHelpers.h"
+#include "AnalysisQuery/EventHelpers.h"
 
 std::vector<CP::SystematicSet>
-AnaQ::EventHelpers::getSystematicVariation(const CP::SystematicSet &inSysts,
+EventHelpers::getSystematicVariation(const CP::SystematicSet &inSysts,
                                            const std::string &systMode,
                                            float varSigma) {
   std::vector<CP::SystematicSet> outSystList;
@@ -48,21 +48,21 @@ AnaQ::EventHelpers::getSystematicVariation(const CP::SystematicSet &inSysts,
   return outSystList;
 }
 
-AnaQ::SystematicMode::SystematicMode(const std::string &name, float value)
+SystematicMode::SystematicMode(const std::string &name, float value)
     : name(name), value(value) {}
 
 std::vector<CP::SystematicSet>
-AnaQ::SystematicMode::from(const CP::SystematicSet &inSysts) const {
+SystematicMode::from(const CP::SystematicSet &inSysts) const {
   return EventHelpers::getSystematicVariation(inSysts, this->name, this->value);
 }
 
-bool AnaQ::EventHelpers::sortByPt(const xAOD::IParticle *partA,
+bool EventHelpers::sortByPt(const xAOD::IParticle *partA,
                                   const xAOD::IParticle *partB) {
   return partA->pt() > partB->pt();
 }
 
 std::map<std::string, CP::SystematicVariation>
-AnaQ::EventHelpers::makeSystematicVariationMap(AnaQ::Json const &sysCfg) {
+EventHelpers::makeSystematicVariationMap(Json const &sysCfg) {
   std::map<std::string, CP::SystematicVariation> varMap;
   for (auto const &[sys, vars] : sysCfg.items()) {
     for (auto const& var : vars.items()) {
