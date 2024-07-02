@@ -21,7 +21,8 @@ std::shared_ptr<TH1> makeHist(const std::vector<double> &xbins = {0.0, 1.0},
   if constexpr (Dim == 1) {
     (void)ybins;
     (void)zbins;
-    if constexpr (std::is_same_v<Prec, char> || std::is_same_v<Prec, bool>) {
+    if constexpr (std::is_same_v<Prec, char> ||
+                         std::is_same_v<Prec, bool>) {
       hist =
           std::shared_ptr<TH1C>(new TH1C("", "", xbins.size() - 1, &xbins[0]));
     } else if constexpr (std::is_same_v<Prec, int>) {

@@ -115,6 +115,9 @@ if __name__ == '__main__':
   # run analysis
   analysis.analyze(df, ds)
 
+  # make sure dataflow has traversed
+  # df.analyze()
+
   # create the output file
   try:
     out_file = ROOT.TFile.Open(output_file, 'RECREATE')
