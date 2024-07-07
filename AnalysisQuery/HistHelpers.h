@@ -21,8 +21,7 @@ std::shared_ptr<TH1> makeHist(const std::vector<double> &xbins = {0.0, 1.0},
   if constexpr (Dim == 1) {
     (void)ybins;
     (void)zbins;
-    if constexpr (std::is_same_v<Prec, char> ||
-                         std::is_same_v<Prec, bool>) {
+    if constexpr (std::is_same_v<Prec, char> || std::is_same_v<Prec, bool>) {
       hist =
           std::shared_ptr<TH1C>(new TH1C("", "", xbins.size() - 1, &xbins[0]));
     } else if constexpr (std::is_same_v<Prec, int>) {
@@ -133,4 +132,12 @@ std::shared_ptr<TH1> makeHist(size_t nxbins, double xmin, double xmax,
   return hist;
 }
 
+std::shared_ptr<TH1> cloneHist(std::shared_ptr<TH1> hist);
+
 } // namespace HistHelpers
+
+inline std::shared_ptr<TH1> HistHelpers::cloneHist(std::shared_ptr<TH1> hist) {
+  auto cloned = std::shared_ptr<TH1>(static_cast<TH1 *>(hist->Clone()));
+  cloned->SetDirectory(nullptr);
+  return cloned;
+}

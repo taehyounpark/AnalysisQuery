@@ -1,6 +1,7 @@
-#include "AnalysisQuery/RDS.h"
 #include "AnalysisQuery/TreeData.h"
+#include "AnalysisQuery/EventData.h"
 #include "AnalysisQuery/Hist.h"
+#include "AnalysisQuery/DataAnalysis.h"
 
 #include <queryosity.hpp>
 
@@ -22,7 +23,10 @@
 #pragma link C++ class Hist < 2, ROOT::RVec < float>>;
 #pragma link C++ class Hist < 3, ROOT::RVec < float>>;
 
-#pragma link C++ class Tree;
-#pragma link C++ class Event;
+#pragma link C++ class TreeData;
+#pragma link C++ class EventData;
+
+#pragma link C++ class DataAnalysis<TreeData>;
+#pragma link C++ class DataAnalysis<EventData>;
 
 #endif

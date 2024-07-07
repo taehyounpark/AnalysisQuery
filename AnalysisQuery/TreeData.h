@@ -30,7 +30,7 @@ public:
   TreeData(const std::vector<std::string> &filePaths, const std::string &treeName);
   TreeData(std::initializer_list<std::string> filePaths,
        const std::string &treeName);
-  ~TreeData() = default;
+  virtual ~TreeData() = default;
 
   virtual void parallelize(unsigned int nslots) final override;
 

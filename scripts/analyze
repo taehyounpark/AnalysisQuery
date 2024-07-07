@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os 
+import sys
 import argparse
 import functools
 import importlib
@@ -19,7 +20,7 @@ namespace query = qty::query;
 namespace systematic = qty::systematic;
 '''
 )
-from AnalysisQuery import AnalysisFlow, TreeData, EventData
+from AnalysisQuery import DataAnalysis, TreeData, EventData
 
 def parse_arguments():
   parser = argparse.ArgumentParser(description="Process some analysis parameters.")
@@ -30,13 +31,12 @@ def parse_arguments():
   # Optional arguments
   parser.add_argument('--tree', type=str, default='CollectionTree', help='Name of the tree to analyze')
   parser.add_argument('--files', nargs='*', type=str, default=[], help='List of file paths')
-  parser.add_argument('--input', type=str, help='Input JSON to specify the (tree, files) options')
+  parser.add_argument('--input', '-i', type=str, help='Input JSON to specify the (tree, files) options')
   parser.add_argument('--mt', type=int, default=0, help='Number of threads to use (default: 0)')
   parser.add_argument('--entries', type=int, default=-1, help='Number of entries to process (default: -1)')
   parser.add_argument('--weight', type=float, default=1.0, help='Scaling applied to all weights (default: 1.0)')
-  parser.add_argument('--configure', type=str, help='Configure the AnalysisFlow instance')
-  parser.add_argument('--force-output', action='store_true', help='Set this flag to enable fore output')
-  parser.add_argument('--output', type=str, default='analyzed.root', help='Path to the output file (default: analyzed.root)')
+  parser.add_argument('--overwrite-output', '-f', action='store_true', help='Set this flag to enable fore output')
+  parser.add_argument('--output', '-o', type=str, default='analyzed.root', help='Path to the output file (default: analyzed.root)')
 
   # parse arguments
   args = parser.parse_args()
@@ -57,14 +57,17 @@ if __name__ == '__main__':
   # check if output already exists
   output_file = args.output
   if os.path.exists(args.output):
-    if not args.force_output:
+    if not args.overwrite_output:
       raise FileExistsError(f"Output file {output_file} already exists, delete it or specify a different file path.")
 
   # import the analysis by name
   try:
-    get_analysis_klass = lambda base, attrs: functools.reduce(getattr, attrs, base)
-    analysis_klass = get_analysis_klass(ROOT, args.analysis.split('::'))
-    analysis = analysis_klass()
+    package_name, module_name = args.analysis.rsplit('.', 1)
+    package = importlib.import_module(package_name)
+    module = getattr(package, module_name)
+    # get_analysis_klass = lambda base, attrs: functools.reduce(getattr, attrs, base)
+    # analysis_klass = get_analysis_klass(ROOT, args.analysis.split('::'))
+    analysis = module()
 
   # could not import analysis
   except ModuleNotFoundError:
@@ -107,22 +110,36 @@ if __name__ == '__main__':
   ))
   df = cppyy.gbl.df
 
-  if isinstance(analysis, AnalysisFlow[EventData]):
+  if isinstance(analysis, DataAnalysis[EventData]):
     ds = df.load(qty.dataset.input['EventData'](ROOT.std.vector['std::string'](args.files), args.tree))
-  elif isinstance(analysis, AnalysisFlow[TreeData]):
+  elif isinstance(analysis, DataAnalysis[TreeData]):
     ds = df.load(qty.dataset.input['TreeData'](ROOT.std.vector['std::string'](args.files), args.tree))
     
-  # run analysis
-  analysis.analyze(df, ds)
 
-  # make sure dataflow has traversed
+  print('Initializing...')
+  analysis.initialize()
+
+  print('Analyzing...')
+  analysis.analyze(df, ds)
   # df.analyze()
 
+  print('Finalizing...')
+  analysis.finalize()
+
+  # output results
+  print('Outputting...')
   # create the output file
   try:
     out_file = ROOT.TFile.Open(output_file, 'RECREATE')
   except OSError as e:
     raise OSError(f"Failed to create output file {output_file}: {e.strerror}")
-
-  # dump results
+  # write results
   analysis.output(out_file)
+
+  # IMPORTANT
+  # must clean up analysis BEFORE output file
+  # (clashing object ownership between std::shared_ptr's of results written out to file)
+  del analysis
+  del out_file
+
+  sys.exit(0)
