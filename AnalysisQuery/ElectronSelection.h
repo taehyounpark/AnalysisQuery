@@ -2,8 +2,6 @@
 
 #include "EventHelpers.h"
 
-#include <EventLoop/StatusCode.h>
-
 #include "ElectronPhotonSelectorTools/AsgElectronIsEMSelector.h"
 #include "ElectronPhotonSelectorTools/AsgElectronLikelihoodTool.h"
 #include "ElectronPhotonSelectorTools/LikelihoodEnums.h"
@@ -19,12 +17,11 @@
 #include "xAODEgamma/ElectronContainer.h"
 #include "xAODEventInfo/EventInfo.h"
 
-
-
 class ElectronSelection
   : public Column<ConstDataVector<xAOD::ElectronContainer>(
       ConstDataVector<xAOD::ElectronContainer>)>
 {
+
 public:
   ElectronSelection(const Json& cfg);
   ~ElectronSelection() = default;

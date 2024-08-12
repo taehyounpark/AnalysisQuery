@@ -39,7 +39,7 @@ void PileupReweight::initialize(unsigned int slot, unsigned long long,
           .ignore();
     m_prwTool_handle.retrieve().ignore();
     if (m_prwTool_handle->applySystematicVariation(m_sysSet) !=
-        EL::StatusCode::SUCCESS) {
+        StatusCode::SUCCESS) {
       throw std::runtime_error("Failed to apply systematic variation '" +
                               m_sysSet.name() + "' on pileup reweighting tool");
   }

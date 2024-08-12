@@ -2,7 +2,6 @@
 
 #include "AnalysisQuery/ObjectCalibration.h"
 
-// external tools include(s):
 #include "AsgTools/AnaToolHandle.h"
 #include "ElectronPhotonFourMomentumCorrection/EgammaCalibrationAndSmearingTool.h"
 #include "IsolationCorrections/IsolationCorrectionTool.h"
@@ -12,7 +11,8 @@
 
 #include <queryosity.hpp>
 
-class ElectronCalibration : public ObjectCalibration<xAOD::ElectronContainer> {
+class ElectronCalibration : public ObjectCalibration<xAOD::ElectronContainer> 
+{
 
 public:
   ElectronCalibration(Json const &calibCfg,

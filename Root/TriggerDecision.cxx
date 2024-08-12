@@ -20,11 +20,9 @@ void TriggerDecision::initialize(unsigned int slot, unsigned long long,
 
 bool TriggerDecision::evaluate(
     qty::column::observable<xAOD::EventInfo>) const {
-  if (m_trigDecTool_handle->beginEvent() != EL::StatusCode::SUCCESS) {
+  if (m_trigDecTool_handle->beginEvent() != StatusCode::SUCCESS) {
     throw std::runtime_error("Failure in trigger decision tool");
   }
-  auto printingTriggerChainGroup =
-      m_trigDecTool_handle->getChainGroup(m_triggerSelection);
   return m_trigDecTool_handle->getChainGroup(m_triggerSelection)->isPassed();
 }
 

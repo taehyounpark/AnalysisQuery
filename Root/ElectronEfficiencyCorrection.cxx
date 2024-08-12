@@ -67,7 +67,7 @@ ROOT::RVec<double> ElectronEfficiencyCorrection::evaluate(
     Observable<ConstDataVector<xAOD::ElectronContainer>> electrons)
     const {
   if (m_elEffCorrTool_handle->applySystematicVariation(m_sysSet) !=
-      EL::StatusCode::SUCCESS) {
+      StatusCode::SUCCESS) {
     throw std::runtime_error(
         "Failed to apply systematic variation '" + m_sysSet.name() +
         "' on electron efficiency correction tool '" + m_toolName + "'");
@@ -81,7 +81,7 @@ ROOT::RVec<double> ElectronEfficiencyCorrection::evaluate(
         m_elEffCorrTool_handle->getEfficiencyScaleFactor(*elItr, effSF);
     if (status == CP::CorrectionCode::Error) {
       // ANA_MSG_ERROR( "Problem in PID getEfficiencyScaleFactor Tool");
-      // return EL::StatusCode::FAILURE;
+      // return StatusCode::FAILURE;
       throw std::runtime_error(
           "Problem in electron efficiency correction tool '" + m_toolName +
           "'");

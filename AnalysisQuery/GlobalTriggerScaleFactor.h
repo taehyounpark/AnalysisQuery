@@ -36,23 +36,10 @@ public:
   void finalize(unsigned) override;
 
 protected:
-  bool applySystematicVariation(CP::SystematicSet const& sysSet);
+  StatusCode applySystematicVariation(CP::SystematicSet const& sysSet);
 
 protected:
-  mutable asg::AnaToolHandle<ITrigGlobalEfficiencyCorrectionTool>
-    m_trigGlobalTool_handle;
   int m_outputLevel;
-
-  mutable std::vector<asg::AnaToolHandle<IAsgElectronEfficiencyCorrectionTool>>
-    m_elecEffTools_handles;
-  mutable std::vector<asg::AnaToolHandle<IAsgElectronEfficiencyCorrectionTool>>
-    m_elecSFTools_handles;
-  mutable ToolHandleArray<IAsgElectronEfficiencyCorrectionTool>
-    m_elecEffTools_handleArray;
-  mutable ToolHandleArray<IAsgElectronEfficiencyCorrectionTool>
-    m_elecSFTools_handleArray;
-
-  // std::map<string,string> m_legsPerTool;
 
   CP::SystematicSet m_sysSet;
 
@@ -66,4 +53,20 @@ protected:
     m_elecEffCorrectionFileNameList;
   std::map<std::string, std::vector<std::string>>
     m_elecSFCorrectionFileNameList;
+
+  // std::map<string,string> m_legsPerTool;
+
+protected:
+  mutable asg::AnaToolHandle<ITrigGlobalEfficiencyCorrectionTool>
+    m_trigGlobalTool_handle; //!
+
+  mutable std::vector<asg::AnaToolHandle<IAsgElectronEfficiencyCorrectionTool>>
+    m_elecEffTools_handles; //!
+  mutable std::vector<asg::AnaToolHandle<IAsgElectronEfficiencyCorrectionTool>>
+    m_elecSFTools_handles; //!
+  mutable ToolHandleArray<IAsgElectronEfficiencyCorrectionTool>
+    m_elecEffTools_handleArray; //!
+  mutable ToolHandleArray<IAsgElectronEfficiencyCorrectionTool>
+    m_elecSFTools_handleArray; //!
+
 };

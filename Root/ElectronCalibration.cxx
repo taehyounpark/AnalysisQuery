@@ -2,9 +2,9 @@
 
 #include <iostream>
 
-#include <EventLoop/Job.h>
-#include <EventLoop/StatusCode.h>
-#include <EventLoop/Worker.h>
+// #include <EventLoop/Job.h>
+// #include <EventLoop/StatusCode.h>
+// #include <EventLoop/Worker.h>
 
 #include "TDirectory.h"
 
@@ -84,7 +84,7 @@ ConstDataVector<xAOD::ElectronContainer> ElectronCalibration::evaluate(
     }
   }
   auto calibElCont =
-      EventHelpers::makeConstDataVector(m_shallowCopy.elements.get());
+      EventHelpers::getConstDataVector(m_shallowCopy.elements.get());
 
   // sort by pT if the ordering might have changed pre- vs. post-calibration
   if (m_sortByPt) {

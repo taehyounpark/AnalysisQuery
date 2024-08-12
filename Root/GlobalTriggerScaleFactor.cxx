@@ -23,10 +23,10 @@ void GlobalTriggerScaleFactor::initialize(unsigned int slot,
 
   // electron efficiency correction tools
   const auto nElecTriggers = m_elecTriggers.size();
-  m_elecEffTools_handles.resize(nElecTriggers);
-  m_elecSFTools_handles.resize(nElecTriggers);
-  m_elecEffTools_handleArray.resize(nElecTriggers);
-  m_elecSFTools_handleArray.resize(nElecTriggers);
+  // m_elecEffTools_handles.resize(nElecTriggers);
+  // m_elecSFTools_handles.resize(nElecTriggers);
+  // m_elecEffTools_handleArray.resize(nElecTriggers);
+  // m_elecSFTools_handleArray.resize(nElecTriggers);
   for (unsigned itrig = 0; itrig < nElecTriggers; ++itrig) {
     auto const &elecTrig = m_elecTriggers[itrig];
 
@@ -119,7 +119,7 @@ double GlobalTriggerScaleFactor::evaluate(
                                                           electrons->end());
   double globTrigSF = 1.0;
   if (m_trigGlobalTool_handle->getEfficiencyScaleFactor(
-      triggeringElectrons, globTrigSF) != EL::StatusCode::SUCCESS) {
+      triggeringElectrons, globTrigSF) != CP::CorrectionCode::Ok) {
         throw std::runtime_error("cannot calculate global trigger scale factor");
   }
   return globTrigSF;
@@ -127,16 +127,15 @@ double GlobalTriggerScaleFactor::evaluate(
 
 void GlobalTriggerScaleFactor::finalize(unsigned int) {}
 
-bool GlobalTriggerScaleFactor::applySystematicVariation(
+StatusCode GlobalTriggerScaleFactor::applySystematicVariation(
     CP::SystematicSet const &sysSet) {
-  bool sysCode;
   for (auto &elecEffTool_handle : m_elecEffTools_handleArray) {
-    sysCode = sysCode || (elecEffTool_handle->applySystematicVariation(
-                              sysSet) == EL::StatusCode::SUCCESS);
+    auto statusCode = elecEffTool_handle->applySystematicVariation(sysSet);
+    if (statusCode != StatusCode::SUCCESS) return statusCode;
   }
   for (auto &elecSFTool_handle : m_elecSFTools_handleArray) {
-    sysCode = sysCode || (elecSFTool_handle->applySystematicVariation(sysSet) ==
-                          EL::StatusCode::SUCCESS);
+    auto statusCode = elecSFTool_handle->applySystematicVariation(sysSet);
+    if (statusCode != StatusCode::SUCCESS) return statusCode;
   }
-  return sysCode;
+  return StatusCode::SUCCESS;
 }
