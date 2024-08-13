@@ -11,28 +11,33 @@
 
 #include <queryosity.hpp>
 
-class ElectronCalibration : public ObjectCalibration<xAOD::ElectronContainer> 
-{
+class ElectronCalibration : public ObjectCalibration<xAOD::ElectronContainer> {
 
 public:
-  ElectronCalibration(Json const &calibCfg,
-                      const CP::SystematicVariation &sysVar = {});
+  struct Configuration {
+    std::string esModel;
+    std::string decorrelationModel;
+    bool useFastSim;
+    int randomRunNumber;
+    bool applyIsolationCorrection;
+    bool sortByPt;
+  };
+
+public:
+  ElectronCalibration(Configuration const &cfg,
+                      CP::SystematicVariation const &sysVar = {});
   ~ElectronCalibration() = default;
 
   void initialize(unsigned int, unsigned long long,
                   unsigned long long) final override;
   ConstDataVector<xAOD::ElectronContainer>
-  evaluate(Observable<xAOD::ElectronContainer> elCont) const final override;
+  evaluate(qty::column::observable<xAOD::ElectronContainer> elCont)
+      const final override;
   void finalize(unsigned int) final override;
 
-protected:
-  std::string m_esModel;
-  std::string m_decorrelationModel;
-  bool m_useFastSim;
-  int m_randomRunNumber;
-  bool m_applyIsolationCorrection;
-  bool m_sortByPt;
-
-  mutable asg::AnaToolHandle<CP::EgammaCalibrationAndSmearingTool> m_p4CorrTool; //!
-  mutable asg::AnaToolHandle<CP::IsolationCorrectionTool> m_isoCorrTool;         //!
+private:
+  Configuration m_cfg;
+  mutable asg::AnaToolHandle<CP::EgammaCalibrationAndSmearingTool>
+      m_p4CorrToolHandle;                                                      //!
+  mutable asg::AnaToolHandle<CP::IsolationCorrectionTool> m_isoCorrToolHandle; //!
 };

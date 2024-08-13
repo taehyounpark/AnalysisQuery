@@ -2,8 +2,7 @@
 
 #include "TDirectory.h"
 
-ElectronEfficiencyCorrection::ElectronEfficiencyCorrection(
-    Json const &sfConfig)
+ElectronEfficiencyCorrection::ElectronEfficiencyCorrection(Json const &sfConfig)
     : m_sysSet({}) {
   m_toolName = sfConfig.value("toolName", "ElectronEfficiencyCorrectionTool");
   m_simulationFlavour = sfConfig.value("simulationFlavour", 1);
@@ -39,12 +38,12 @@ ElectronEfficiencyCorrection::ElectronEfficiencyCorrection(
 }
 
 void ElectronEfficiencyCorrection::initialize(unsigned int slot,
-                                                    unsigned long long,
-                                                    unsigned long long) {
+                                              unsigned long long,
+                                              unsigned long long) {
   if (!m_elEffCorrTool_handle.isUserConfigured()) {
-    m_elEffCorrTool_handle.setTypeAndName("AsgElectronEfficiencyCorrectionTool/" +
-                                          m_toolName + "_" +
-                                          std::to_string(slot));
+    m_elEffCorrTool_handle.setTypeAndName(
+        "AsgElectronEfficiencyCorrectionTool/" + m_toolName + "_" +
+        std::to_string(slot));
     m_elEffCorrTool_handle.setProperty("ForceDataType", m_simulationFlavour)
         .ignore();
     m_elEffCorrTool_handle.setProperty("CorrelationModel", m_correlationModel)
@@ -64,8 +63,7 @@ void ElectronEfficiencyCorrection::initialize(unsigned int slot,
 }
 
 ROOT::RVec<double> ElectronEfficiencyCorrection::evaluate(
-    Observable<ConstDataVector<xAOD::ElectronContainer>> electrons)
-    const {
+    qty::column::observable<ConstDataVector<xAOD::ElectronContainer>> electrons) const {
   if (m_elEffCorrTool_handle->applySystematicVariation(m_sysSet) !=
       StatusCode::SUCCESS) {
     throw std::runtime_error(

@@ -30,9 +30,6 @@ template <typename Dec>
 using EventDecision = qty::column::definition<Dec(xAOD::EventInfo)>;
 
 template <typename T>
-using Observable = qty::column::observable<T>;
-
-template <typename T>
 using Column = qty::column::definition<T>;
 
 namespace EventHelpers {

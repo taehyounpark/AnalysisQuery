@@ -9,44 +9,38 @@
 #include "TDirectory.h"
 
 ElectronCalibration::ElectronCalibration(
-    Json const &calibCfg, CP::SystematicVariation const &sysVar)
-    : ObjectCalibration<xAOD::ElectronContainer>::ObjectCalibration(sysVar) {
-  m_esModel = calibCfg["esModel"].get<std::string>();
-  m_decorrelationModel = calibCfg["decorrelationModel"].get<std::string>();
-  m_useFastSim = calibCfg.value("useFastSim", false);
-  m_sortByPt = calibCfg.value("sortByPt", true);
-  m_applyIsolationCorrection =
-      calibCfg.value("applyIsolationCorrection", false);
-  m_randomRunNumber = calibCfg.value("randomRunNumber", -1);
-}
+    ElectronCalibration::Configuration const &cfg,
+    CP::SystematicVariation const &sysVar)
+    : ObjectCalibration<xAOD::ElectronContainer>::ObjectCalibration(sysVar),
+      m_cfg(cfg) {}
 
-void ElectronCalibration::initialize(unsigned int slot,
-                                           unsigned long long,
-                                           unsigned long long) {
-  // CP::EgammaCalibrationAndSmearingTool
-  if (!m_p4CorrTool.isUserConfigured()) {
-    m_p4CorrTool = asg::AnaToolHandle<CP::EgammaCalibrationAndSmearingTool>(
-        "CP::EgammaCalibrationAndSmearingTool/"
-        "EgammaCalibrationAndSmearingTool_" +
-        m_sysSet.name() + "_" + std::to_string(slot));
-    m_p4CorrTool.setProperty("ESModel", m_esModel).ignore();
-    m_p4CorrTool.setProperty("decorrelationModel", m_decorrelationModel)
+void ElectronCalibration::initialize(unsigned int slot, unsigned long long,
+                                     unsigned long long) {
+
+  // calibration & smearin
+  m_p4CorrToolHandle = asg::AnaToolHandle<CP::EgammaCalibrationAndSmearingTool>(
+      "CP::EgammaCalibrationAndSmearingTool/"
+      "EgammaCalibrationAndSmearingTool_" +
+      m_sysSet.name() + "_" + std::to_string(slot));
+  if (!m_p4CorrToolHandle.isUserConfigured()) {
+    m_p4CorrToolHandle.setProperty("ESModel", m_cfg.esModel).ignore();
+    m_p4CorrToolHandle.setProperty("decorrelationModel", m_cfg.decorrelationModel)
         .ignore();
-    m_p4CorrTool.setProperty("useFastSim", (int)m_useFastSim).ignore();
-    if (m_randomRunNumber >= 0)
-      m_p4CorrTool.setProperty("randomRunNumber", m_randomRunNumber).ignore();
-    m_p4CorrTool.retrieve().ignore();
-    m_p4CorrTool->applySystematicVariation(m_sysSet).ignore();
+    m_p4CorrToolHandle.setProperty("useFastSim", (int)m_cfg.useFastSim).ignore();
+    if (m_cfg.randomRunNumber >= 0)
+      m_p4CorrToolHandle.setProperty("randomRunNumber", m_cfg.randomRunNumber).ignore();
   }
+  m_p4CorrToolHandle.retrieve().ignore();
+  m_p4CorrToolHandle->applySystematicVariation(m_sysSet).ignore();
 
-  // CP::IsolationCorrectionTool
-  if (!m_isoCorrTool.isUserConfigured()) {
-    m_isoCorrTool = asg::AnaToolHandle<CP::IsolationCorrectionTool>(
-        "CP::IsolationCorrectionTool/IsolationCorrectionTool_" +
-        m_sysSet.name() + "_" + std::to_string(slot));
-    m_isoCorrTool.setProperty("IsMC", true).ignore();
-    m_isoCorrTool.retrieve().ignore();
+  // isolation correction
+  m_isoCorrToolHandle = asg::AnaToolHandle<CP::IsolationCorrectionTool>(
+      "CP::IsolationCorrectionTool/IsolationCorrectionTool_" + m_sysSet.name() +
+      "_" + std::to_string(slot));
+  if (!m_isoCorrToolHandle.isUserConfigured()) {
+    m_isoCorrToolHandle.setProperty("IsMC", true).ignore();
   }
+  m_isoCorrToolHandle.retrieve().ignore();
 }
 
 ConstDataVector<xAOD::ElectronContainer> ElectronCalibration::evaluate(
@@ -58,36 +52,32 @@ ConstDataVector<xAOD::ElectronContainer> ElectronCalibration::evaluate(
 
   // calibration each electron
   for (auto elecItr : *(m_shallowCopy.elements)) {
+
+    // electron must have associated cluster & track
     if (elecItr->caloCluster() && elecItr->trackParticle()) {
-      // std::cout << "electron pt correction (before) = " << elecItr->pt();
-      if (m_p4CorrTool->applyCorrection(*elecItr) != CP::CorrectionCode::Ok) {
-        throw std::runtime_error(
-            "Problem in "
-            "CP::EgammaCalibrationAndSmearingTool::applyCorrection()");
+
+      if (m_p4CorrToolHandle->applyCorrection(*elecItr) !=
+          CP::CorrectionCode::Ok) {
+        throw std::runtime_error("failed to apply electron calibration");
       }
-      // std::cout << ", (after) = " << elecItr->pt();
-      // std::cout << std::endl;
-      if (m_applyIsolationCorrection) {
-        if (elecItr->pt() > 7e3 &&
-            m_isoCorrTool->CorrectLeakage(*elecItr) != CP::CorrectionCode::Ok) {
+
+      if (m_cfg.applyIsolationCorrection) {
+        if (elecItr->pt() > 7e3 && m_isoCorrToolHandle->CorrectLeakage(
+                                       *elecItr) != CP::CorrectionCode::Ok) {
           throw std::runtime_error(
-              "Problem in CP::IsolationCorrectionTool::CorrectLeakage()");
+              "failed to apply electron leakage correction");
         }
       }
     }
 
     if (!xAOD::setOriginalObjectLink(*elCont, *m_shallowCopy.elements)) {
-      throw std::runtime_error("Failed to set original object links -- MET "
-                               "rebuilding cannot proceed.");
-      // ANA_MSG_ERROR( "Failed to set original object links -- MET rebuilding
-      // cannot proceed.");
+      throw std::runtime_error("failed to make shallow copy");
     }
   }
   auto calibElCont =
       EventHelpers::getConstDataVector(m_shallowCopy.elements.get());
 
-  // sort by pT if the ordering might have changed pre- vs. post-calibration
-  if (m_sortByPt) {
+  if (m_cfg.sortByPt) {
     std::sort(calibElCont.begin(), calibElCont.end(), EventHelpers::sortByPt);
   }
 

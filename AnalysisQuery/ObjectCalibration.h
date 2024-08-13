@@ -27,7 +27,7 @@ struct ShallowCopy
 };
 
 template<typename Cont>
-class ObjectCalibration : public Column<ConstDataVector<Cont>(Cont)>
+class ObjectCalibration : public qty::column::definition<ConstDataVector<Cont>(Cont)>
 {
 
 public:

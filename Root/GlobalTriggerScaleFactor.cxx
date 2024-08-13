@@ -88,7 +88,7 @@ void GlobalTriggerScaleFactor::initialize(unsigned int slot,
 }
 
 double GlobalTriggerScaleFactor::evaluate(
-    Observable<ConstDataVector<xAOD::ElectronContainer>> electrons) const {
+    qty::column::observable<ConstDataVector<xAOD::ElectronContainer>> electrons) const {
   // run electron trigger efficiency & SF tools
   for (auto elItr : *(electrons)) {
     for (auto &elecEffTool_handle : m_elecEffTools_handles) {

@@ -13,7 +13,7 @@ public:
   ~PileupReweight() = default;
 
   void initialize(unsigned int, unsigned long long ,unsigned long long) override;
-  float evaluate(Observable<xAOD::EventInfo> eventInfo) const override;
+  float evaluate(qty::column::observable<xAOD::EventInfo> eventInfo) const override;
   void finalize(unsigned int) override;
 
 protected:

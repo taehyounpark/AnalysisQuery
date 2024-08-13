@@ -19,7 +19,7 @@
 #include <queryosity.hpp>
 
 class ElectronEfficiencyCorrection
-  : public Column<ROOT::RVec<double>(ConstDataVector<xAOD::ElectronContainer>)>
+  : public qty::column::definition<ROOT::RVec<double>(ConstDataVector<xAOD::ElectronContainer>)>
 {
 
 public:
@@ -32,7 +32,7 @@ public:
                   unsigned long long,
                   unsigned long long) override;
   ROOT::RVec<double> evaluate(
-    Observable<ConstDataVector<xAOD::ElectronContainer>>) const override;
+    qty::column::observable<ConstDataVector<xAOD::ElectronContainer>>) const override;
   void finalize(unsigned int) override;
 
 protected:

@@ -47,7 +47,7 @@ void PileupReweight::initialize(unsigned int slot, unsigned long long,
 }
 
 float PileupReweight::evaluate(
-    Observable<xAOD::EventInfo> eventInfo) const {
+    qty::column::observable<xAOD::EventInfo> eventInfo) const {
   m_prwTool_handle->apply(*eventInfo).ignore();
   return m_prwTool_handle->getCombinedWeight(*eventInfo);
   // SG::AuxElement::Decorator<float>

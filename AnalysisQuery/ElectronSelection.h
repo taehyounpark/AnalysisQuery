@@ -17,32 +17,36 @@
 #include "xAODEgamma/ElectronContainer.h"
 #include "xAODEventInfo/EventInfo.h"
 
+#include <queryosity.hpp>
+
 class ElectronSelection
-  : public Column<ConstDataVector<xAOD::ElectronContainer>(
-      ConstDataVector<xAOD::ElectronContainer>)>
-{
+    : public qty::column::definition<ConstDataVector<xAOD::ElectronContainer>(
+          ConstDataVector<xAOD::ElectronContainer>)> {
+
+  struct Configuration {
+    double minPt;
+    double maxEta;
+    std::string isoWorkingPoint;
+    std::string idWorkingPoint;
+  };
 
 public:
-  ElectronSelection(const Json& cfg);
+  ElectronSelection(Configuration const &cfg);
   ~ElectronSelection() = default;
 
-  void initialize(unsigned int,
-                  unsigned long long,
+  void initialize(unsigned int, unsigned long long,
                   unsigned long long) override;
 
   ConstDataVector<xAOD::ElectronContainer> evaluate(
-    Observable<ConstDataVector<xAOD::ElectronContainer>>) const override;
+      qty::column::observable<ConstDataVector<xAOD::ElectronContainer>>)
+      const override;
 
   void finalize(unsigned int) override;
 
 protected:
-  double m_minPt;
-  double m_maxEta;
+  Configuration m_cfg;
 
-  asg::AnaToolHandle<CP::IsolationSelectionTool> m_isolationTool_handle; //!
-  std::string m_isoWorkingPoint;
-
-  std::string m_idWorkingPoint;
-  std::unique_ptr<SG::AuxElement::ConstAccessor<char>> m_passId;
-
+private:
+  asg::AnaToolHandle<CP::IsolationSelectionTool> m_isolationToolHandle; //!
+  std::unique_ptr<SG::AuxElement::ConstAccessor<char>> m_passId;        //!
 };

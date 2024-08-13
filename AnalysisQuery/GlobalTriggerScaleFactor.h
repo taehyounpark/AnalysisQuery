@@ -21,7 +21,7 @@
 #include "AnalysisQuery/EventHelpers.h"
 
 class GlobalTriggerScaleFactor
-  : public Column<double(ConstDataVector<xAOD::ElectronContainer>)>
+  : public qty::column::definition<double(ConstDataVector<xAOD::ElectronContainer>)>
 {
 
 public:
@@ -32,7 +32,7 @@ public:
   void initialize(unsigned int slot,
                   unsigned long long,
                   unsigned long long) override;
-  double evaluate(Observable<ConstDataVector<xAOD::ElectronContainer>>) const override;
+  double evaluate(qty::column::observable<ConstDataVector<xAOD::ElectronContainer>>) const override;
   void finalize(unsigned) override;
 
 protected:

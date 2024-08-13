@@ -12,6 +12,10 @@ public:
   virtual ~DataAnalysis() = default;
 
   virtual void analyze(qty::dataflow& df, qty::dataflow::input<Data>& ds) = 0;
-  virtual void output(TFile* file) const = 0;
+  virtual void output(TFile* file) const;
 
 };
+
+template <typename Data>
+void DataAnalysis<Data>::output(TFile* file) const {
+}
