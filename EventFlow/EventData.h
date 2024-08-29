@@ -23,8 +23,8 @@ public:
 
 public:
   EventData(const std::vector<std::string> &inputFiles,
-        const std::string &collection = "CollectionTree",
-        const std::string &metadata = "MetaData");
+            const std::string &collection = "CollectionTree",
+            const std::string &metadata = "MetaData");
   ~EventData() = default;
 
   virtual void parallelize(unsigned int) final override;
@@ -55,13 +55,12 @@ class EventData::Container : public queryosity::column::reader<T> {
 
 public:
   Container(const std::string &containerName, xAOD::TEvent &event)
-      : m_containerName(containerName), m_event(&event) {}
+      : m_containerName(containerName), m_event(event) {}
   ~Container() = default;
 
   virtual T const &read(unsigned int, unsigned long long) const final override {
     T const *container(nullptr);
-    if (m_event->retrieve(container, this->m_containerName.c_str())
-            .isFailure()) {
+    if (m_event.retrieve(container, this->m_containerName).isFailure()) {
       throw std::runtime_error(TString::Format(
           "failed to retrieve '%s' from event", this->m_containerName.c_str()));
     }
@@ -70,7 +69,7 @@ public:
 
 protected:
   std::string m_containerName;
-  xAOD::TEvent *m_event;
+  xAOD::TEvent &m_event;
 };
 
 template <typename U>

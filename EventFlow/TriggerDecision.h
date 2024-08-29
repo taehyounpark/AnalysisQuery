@@ -1,6 +1,6 @@
 #pragma once
 
-#include "AnalysisQuery/EventHelpers.h"
+#include "EventFlow/EventHelpers.h"
 
 // Trigger include(s).
 #include "TrigConfxAOD/xAODConfigTool.h"
@@ -15,12 +15,17 @@
 #include "xAODCore/ShallowCopy.h"
 #include "xAODEventInfo/EventInfo.h"
 
+
 #include <queryosity.hpp>
 
-class TriggerDecision : public EventDecision<bool> {
+struct TriggerDecisionConfig {
+  std::vector<std::string> triggerList;
+};
+
+class TriggerDecision : public EventDecision<bool, TriggerDecisionConfig> {
 
 public:
-  TriggerDecision(const std::string& triggerSelection);
+  TriggerDecision(TriggerDecisionConfig const& trigDecCfg);
   virtual ~TriggerDecision() = default;
 
   void initialize(unsigned int, unsigned long long ,unsigned long long) override;
@@ -28,9 +33,6 @@ public:
   void finalize(unsigned int) override;
 
 protected:
-  mutable asg::AnaToolHandle<TrigConf::ITrigConfigTool>  m_trigCfgTool_handle; //!
+  mutable asg::AnaToolHandle<TrigConf::ITrigConfigTool>  m_trigDecCfgTool_handle; //!
   mutable asg::AnaToolHandle<Trig::TrigDecisionTool> m_trigDecTool_handle; //!
-
-  std::string m_triggerSelection;
-
 };

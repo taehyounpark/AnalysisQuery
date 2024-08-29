@@ -10,8 +10,11 @@
 
 #include "TTree.h"
 
+namespace EventFlow 
+{
+
 template <typename... ColumnTypes>
-class TreeSnapshot
+class TreeDump
     : public qty::query::definition<std::shared_ptr<TTree>(
           ColumnTypes...)> {
 
@@ -22,9 +25,9 @@ public:
 
 public:
   template <typename... Names>
-  TreeSnapshot(const std::string &treeName, Names const &...branchNames);
-  TreeSnapshot(const std::string &treeName, std::vector<std::string> const& branchNames);
-  virtual ~TreeSnapshot() = default;
+  TreeDump(const std::string &treeName, Names const &...branchNames);
+  TreeDump(const std::string &treeName, std::vector<std::string> const& branchNames);
+  virtual ~TreeDump() = default;
 
   virtual void fill(qty::column::observable<ColumnTypes>...,
                     double) final override;
@@ -73,9 +76,11 @@ protected:
   ColumnTuple_t m_columns;
 };
 
+}
+
 template <typename... ColumnTypes>
 template <typename... Names>
-TreeSnapshot<ColumnTypes...>::TreeSnapshot(const std::string &treeName,
+EventFlow::TreeDump<ColumnTypes...>::TreeDump(const std::string &treeName,
                                          Names const &...branchNames)
     : m_snapshot(std::make_shared<TTree>(treeName.c_str(), treeName.c_str())),
       m_branches(makeBranches(std::index_sequence_for<ColumnTypes...>(),
@@ -84,7 +89,7 @@ TreeSnapshot<ColumnTypes...>::TreeSnapshot(const std::string &treeName,
 }
 
 template <typename... ColumnTypes>
-TreeSnapshot<ColumnTypes...>::TreeSnapshot(const std::string &treeName,
+EventFlow::TreeDump<ColumnTypes...>::TreeDump(const std::string &treeName,
                                          std::vector<std::string> const & branchNames)
     : m_snapshot(std::make_shared<TTree>(treeName.c_str(), treeName.c_str())),
       m_branches(std::apply([this](auto&&... args) {
@@ -95,19 +100,19 @@ TreeSnapshot<ColumnTypes...>::TreeSnapshot(const std::string &treeName,
 
 
 template <typename... ColumnTypes>
-void TreeSnapshot<ColumnTypes...>::fill(
+void EventFlow::TreeDump<ColumnTypes...>::fill(
     qty::column::observable<ColumnTypes>... columns, double) {
   this->fillBranches(std::index_sequence_for<ColumnTypes...>(), columns...);
   m_snapshot->Fill();
 }
 
 template <typename... ColumnTypes>
-std::shared_ptr<TTree> TreeSnapshot<ColumnTypes...>::result() const {
+std::shared_ptr<TTree> EventFlow::TreeDump<ColumnTypes...>::result() const {
   return m_snapshot;
 }
 
 template <typename... ColumnTypes>
-std::shared_ptr<TTree> TreeSnapshot<ColumnTypes...>::merge(
+std::shared_ptr<TTree> EventFlow::TreeDump<ColumnTypes...>::merge(
     std::vector<std::shared_ptr<TTree>> const &results) const {
   TList list;
   for (auto const &result : results) {

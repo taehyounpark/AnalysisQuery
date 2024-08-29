@@ -1,4 +1,4 @@
-project(AnalysisQuery)
+project(EventFlow)
 
 find_package(
   ROOT REQUIRED
@@ -23,26 +23,26 @@ find_package(
 find_package(AnalysisBase QUIET)
 find_package(nlohmann_json REQUIRED)
 
-atlas_subdir(AnalysisQuery)
+atlas_subdir(EventFlow)
 
 atlas_add_root_dictionary(
-  AnalysisQueryLib
-  AnalysisQueryDict
+  EventFlowLib
+  EventFlowDict
   ROOT_HEADERS
-  AnalysisQuery/*.h
+  EventFlow/*.h
   Root/LinkDef.h
   EXTERNAL_PACKAGES
   ROOT
   )
 
 atlas_add_library(
-  AnalysisQueryLib
-  AnalysisQuery/*.h
+  EventFlowLib
+  EventFlow/*.h
   Root/*.h
   Root/*.cxx
-  ${AnalysisQueryDict}
+  ${EventFlowDict}
   PUBLIC_HEADERS 
-  AnalysisQuery
+  EventFlow
   LINK_LIBRARIES
   queryosity::queryosity
   nlohmann_json::nlohmann_json
@@ -108,9 +108,6 @@ atlas_add_library(
   PRIVATE_INCLUDE_DIRS ${ROOT_INCLUDE_DIRS}
   PRIVATE_LINK_LIBRARIES ${ROOT_LIBRARIES}
   )
-
-atlas_add_executable(example-daod examples/example-daod.cxx LINK_LIBRARIES
-                     AnalysisQueryLib queryosity::queryosity)
 
 atlas_install_python_modules( python/*.py )
 atlas_install_scripts( scripts/analyze )

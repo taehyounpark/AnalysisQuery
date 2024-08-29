@@ -6,33 +6,17 @@ import argparse
 import functools
 import importlib
 
-import ROOT
-import cppyy
-from ROOT import queryosity as qty
-df = qty.dataflow()
-cppyy.cppdef('''
-using dataflow = qty::dataflow;
-namespace multithread = qty::multithread;
-namespace dataset = qty::dataset;
-namespace column = qty::column;
-namespace selection = qty::selection;
-namespace query = qty::query;
-namespace systematic = qty::systematic;
-'''
-)
-from AnalysisQuery import DataAnalysis, TreeData, EventData
+# from EventFlow import analysis
 
 def parse_arguments():
   parser = argparse.ArgumentParser(description="Process some analysis parameters.")
 
-  # First positional argument
-  parser.add_argument('analysis', type=str, help='Name of the analysis to run')
-
   # Optional arguments
+  parser.add_argument('--config', '-c', type=str, help='Analysis configuration file')
   parser.add_argument('--tree', type=str, default='CollectionTree', help='Name of the tree to analyze')
   parser.add_argument('--files', nargs='*', type=str, default=[], help='List of file paths')
   parser.add_argument('--input', '-i', type=str, help='Input JSON to specify the (tree, files) options')
-  parser.add_argument('--mt', type=int, default=0, help='Number of threads to use (default: 0)')
+  parser.add_argument('--multithread', '-j', type=int, default=0, help='Number of threads to use (default: 0)')
   parser.add_argument('--entries', type=int, default=-1, help='Number of entries to process (default: -1)')
   parser.add_argument('--weight', type=float, default=1.0, help='Scaling applied to all weights (default: 1.0)')
   parser.add_argument('--overwrite-output', '-f', action='store_true', help='Set this flag to enable fore output')
@@ -60,71 +44,63 @@ if __name__ == '__main__':
     if not args.overwrite_output:
       raise FileExistsError(f"Output file {output_file} already exists, delete it or specify a different file path.")
 
-  # import the analysis by name
+  # Prepare a context for exec to avoid polluting the global namespace
+  local_vars = {}
+  ana = None
   try:
-    package_name, module_name = args.analysis.rsplit('.', 1)
-    package = importlib.import_module(package_name)
-    module = getattr(package, module_name)
-    # get_analysis_klass = lambda base, attrs: functools.reduce(getattr, attrs, base)
-    # analysis_klass = get_analysis_klass(ROOT, args.analysis.split('::'))
-    analysis = module()
+    with open(args.config) as f:
+      exec(f.read(), globals(), local_vars)
 
-  # could not import analysis
-  except ModuleNotFoundError:
-    raise ModuleNotFoundError(f"Module {module_name} not found.")
-  except AttributeError:
-      raise AttributeError(f"Module {module_name} does not have the expected attribute.")
+    from EventFlow.analysis import configured_instance
+    ana = configured_instance
+
+    if ana == None:
+      print("A configured analysis instance not found. Have you called EventFlow.analysis.configure()?")
+      sys.exit(1) 
   except Exception as e:
-      raise RuntimeError(f"An unexpected error occurred: {e}")
-
-  # try:
-  #   package_name, module_name = args.configure.rsplit('.', 1)
-  #   package = importlib.import_module(package_name)
-  #   print(package.__dict__)
-  #   print(getattr(package, module_name))
-  #   configure = getattr(getattr(package, module_name), 'configure')
-  #   print(configure)
-  # # could not import analysis
-  # except ModuleNotFoundError:
-  #   raise ModuleNotFoundError(f"Module {module_name} not found.")
-  # except AttributeError:
-  #     raise AttributeError(f"Module {module_name} does not have the expected attribute.")
-  # except Exception as e:
-  #     raise RuntimeError(f"An unexpected error occurred: {e}") 
-
-  # try:
-  #   configure(analysis)
-  # except Exception as e:
-  #     raise RuntimeError(f"An unexpected error occurred: {e}")
+    print(f"Error executing script: {e}")
+    sys.exit(1)
+  
 
   # in_files = [ROOT.TFile.Open(in_file) for in_file in args.files]
   # analysis.preprocess(in_files)
 
-  # df = qty.dataflow(qty.multithread.enable(args.mt), qty.dataset.head(args.entries))
+  import ROOT
+  import cppyy
+  from ROOT import queryosity as qty
+  df = qty.dataflow()
   cppyy.cppdef('''
-  dataflow df(multithread::enable({mt}), dataset::head({entries}), dataset::weight({weight}));
+  using dataflow = qty::dataflow;
+  namespace multithread = qty::multithread;
+  namespace dataset = qty::dataset;
+  namespace column = qty::column;
+  namespace selection = qty::selection;
+  namespace query = qty::query;
+  namespace systematic = qty::systematic;
+  '''
+  )
+
+  # df = qty.dataflow(qty.multithread.enable(args.multithread), qty.dataset.head(args.entries))
+  cppyy.cppdef('''
+  dataflow df(multithread::enable({nthreads}), dataset::head({entries}), dataset::weight({weight}));
   '''.format(
-    mt=int(args.mt),
+    nthreads=int(args.multithread),
     entries=args.entries,
     weight=args.weight
   ))
   df = cppyy.gbl.df
 
-  if isinstance(analysis, DataAnalysis[EventData]):
-    ds = df.load(qty.dataset.input['EventData'](ROOT.std.vector['std::string'](args.files), args.tree))
-  elif isinstance(analysis, DataAnalysis[TreeData]):
-    ds = df.load(qty.dataset.input['TreeData'](ROOT.std.vector['std::string'](args.files), args.tree))
-    
+  ds = df.load(qty.dataset.input['EventData'](ROOT.std.vector['std::string'](args.files), args.tree))
 
   print('Initializing...')
-  analysis.initialize()
+  # ana.initialize()
 
   print('Analyzing...')
-  analysis.analyze(df, ds)
+  ana.analyze(df, ds)
   # df.analyze()
 
   print('Finalizing...')
-  analysis.finalize()
+  # ana.finalize()
 
   # output results
   print('Outputting...')
@@ -134,12 +110,12 @@ if __name__ == '__main__':
   except OSError as e:
     raise OSError(f"Failed to create output file {output_file}: {e.strerror}")
   # write results
-  analysis.output(out_file)
+  ana.output(out_file)
 
   # IMPORTANT
-  # must clean up analysis BEFORE output file
+  # must clean up ana BEFORE output file
   # (clashing object ownership between std::shared_ptr's of results written out to file)
-  del analysis
+  del ana
   del out_file
 
   sys.exit(0)

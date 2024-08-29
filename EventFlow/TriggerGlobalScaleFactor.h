@@ -18,16 +18,37 @@
 #include "PATInterfaces/SystematicVariation.h"
 #include "PATInterfaces/SystematicsUtil.h"
 
-#include "AnalysisQuery/EventHelpers.h"
+#include "EventFlow/EventHelpers.h"
+#include "EventFlow/Action.h"
 
-class GlobalTriggerScaleFactor
-  : public qty::column::definition<double(ConstDataVector<xAOD::ElectronContainer>)>
+#include <string>
+#include <vector>
+#include <map>
+
+struct TriggerGlobalScaleFactorConfig {
+  int simulationFlavour;
+  std::vector<std::string> triggerList;
+  std::string correlationModel;
+  std::vector<std::string> m_trigList_2015;
+  std::vector<std::string> m_trigList_2016;
+  std::vector<std::string> m_trigList_2017;
+  std::vector<std::string> m_trigList_2018;
+  std::vector<std::string> m_trigList_2022;
+  std::vector<std::string> m_trigList_2023;
+  std::vector<std::string> m_trigList_2024;
+  std::vector<std::string> m_trigList_2025;
+  std::vector<std::vector<std::string>> effCorrectionFileNameLists;
+  std::vector<std::vector<std::string>> sfCorrectionFileNameLists;
+};
+
+class TriggerGlobalScaleFactor
+  : public EventFlow::Column<double(ConstDataVector<xAOD::ElectronContainer>), TriggerGlobalScaleFactorConfig>
 {
 
 public:
-  GlobalTriggerScaleFactor(nlohmann::json const& sfCfg,
+  TriggerGlobalScaleFactor(TriggerGlobalScaleFactorConfig const& sfCfg,
                            CP::SystematicVariation const& sysVar = {});
-  ~GlobalTriggerScaleFactor() = default;
+  ~TriggerGlobalScaleFactor() = default;
 
   void initialize(unsigned int slot,
                   unsigned long long,
@@ -39,22 +60,8 @@ protected:
   StatusCode applySystematicVariation(CP::SystematicSet const& sysSet);
 
 protected:
-  int m_outputLevel;
-
-  CP::SystematicSet m_sysSet;
-
   std::vector<std::string> m_elecSF_toolNames;
   std::vector<std::string> m_elecEff_toolNames;
-
-  std::string m_elecCorrelationModel;
-  int m_elecSimulationFlavour;
-  std::vector<std::string> m_elecTriggers;
-  std::map<std::string, std::vector<std::string>>
-    m_elecEffCorrectionFileNameList;
-  std::map<std::string, std::vector<std::string>>
-    m_elecSFCorrectionFileNameList;
-
-  // std::map<string,string> m_legsPerTool;
 
 protected:
   mutable asg::AnaToolHandle<ITrigGlobalEfficiencyCorrectionTool>

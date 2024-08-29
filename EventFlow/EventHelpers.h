@@ -1,7 +1,7 @@
 #pragma once
 
-#include "AsgMessaging/StatusCode.h"
-#include <AsgMessaging/MessageCheck.h>
+// #include <AsgMessaging/StatusCode.h>
+// #include <AsgMessaging/MessageCheck.h>
 
 #include "AthContainers/ConstDataVector.h"
 #include "AthContainers/DataVector.h"
@@ -18,30 +18,22 @@
 
 #include "PathResolver/PathResolver.h"
 
+#include "Action.h"
 #include <queryosity.hpp>
 
-#include <nlohmann/json.hpp>
-
-#include <ROOT/RVec.hxx>
-
-using Json = nlohmann::json;
-
-template <typename Dec>
-using EventDecision = qty::column::definition<Dec(xAOD::EventInfo)>;
-
-template <typename T>
-using Column = qty::column::definition<T>;
+template <typename Dec, typename Cfg>
+using EventDecision = EventFlow::Column<Dec(xAOD::EventInfo), Cfg>;
 
 namespace EventHelpers {
 
-template <typename Cont> ConstDataVector<Cont> getConstDataVector(Cont *cont);
+template <typename Cont> ConstDataVector<Cont> makeConstDataVector(Cont *cont);
 
 bool sortByPt(const xAOD::IParticle* partA, const xAOD::IParticle* partB);
 
 } // namespace EventHelpers
 
 template <typename Cont>
-ConstDataVector<Cont> EventHelpers::getConstDataVector(Cont* cont) {
+ConstDataVector<Cont> EventHelpers::makeConstDataVector(Cont* cont) {
   auto cdv = ConstDataVector<Cont>(SG::VIEW_ELEMENTS);
   cdv.reserve(cont->size());
   for (auto itr : *(cont)) {

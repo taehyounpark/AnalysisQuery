@@ -19,19 +19,19 @@
 
 #include <queryosity.hpp>
 
-class ElectronSelection
-    : public qty::column::definition<ConstDataVector<xAOD::ElectronContainer>(
-          ConstDataVector<xAOD::ElectronContainer>)> {
+struct ElectronSelectionConfig {
+  double minPt = 0.0;
+  double maxEta = 99;
+  std::string isoWorkingPoint = "";
+  std::string idWorkingPoint = "";
+};
 
-  struct Configuration {
-    double minPt;
-    double maxEta;
-    std::string isoWorkingPoint;
-    std::string idWorkingPoint;
-  };
+class ElectronSelection
+    : public EventFlow::Column<ConstDataVector<xAOD::ElectronContainer>(
+          ConstDataVector<xAOD::ElectronContainer>), ElectronSelectionConfig> {
 
 public:
-  ElectronSelection(Configuration const &cfg);
+  ElectronSelection(ElectronSelectionConfig const &cfg);
   ~ElectronSelection() = default;
 
   void initialize(unsigned int, unsigned long long,
@@ -42,9 +42,6 @@ public:
       const override;
 
   void finalize(unsigned int) override;
-
-protected:
-  Configuration m_cfg;
 
 private:
   asg::AnaToolHandle<CP::IsolationSelectionTool> m_isolationToolHandle; //!

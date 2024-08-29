@@ -1,4 +1,4 @@
-#include "AnalysisQuery/EventData.h"
+#include "EventFlow/EventData.h"
 
 #include "TROOT.h"
 
@@ -8,7 +8,8 @@
 
 EventData::EventData(const std::vector<std::string> &inputFiles,
                    const std::string &collection, const std::string &metadata)
-    : m_inputFiles(inputFiles), m_treeName(collection), m_metaName(metadata) {}
+    : m_inputFiles(inputFiles), m_treeName(collection), m_metaName(metadata)
+     {}
 
 void EventData::parallelize(unsigned int nslots) {
   ROOT::EnableThreadSafety();
@@ -56,6 +57,7 @@ EventData::partition() {
     auto event = std::make_unique<xAOD::TEvent>();
     if (!tree || event->readFrom(tree).isFailure()) {
       continue;
+      std::cout << "noo" << std::endl;
     }
 
     // get file entries
