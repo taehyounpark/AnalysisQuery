@@ -1,7 +1,7 @@
 from functools import reduce
 import ROOT
 
-# Global variable to hold the analysis instance
+# Global variable to hold the LazyFlow instance
 configured_instance = None
 
 def configure(class_name, member_variables: dict = {}):
@@ -9,7 +9,7 @@ def configure(class_name, member_variables: dict = {}):
     global configured_instance  # Use global to modify the global variable
 
     if configured_instance is not None:
-        raise RuntimeError("An analysis instance is already configured.")
+        raise RuntimeError("An Analysis instance is already configured.")
 
     def set_members(obj, attr_dict):
         """
@@ -44,3 +44,41 @@ def configure(class_name, member_variables: dict = {}):
         
     except Exception as e:
         print(f"Error: {e}")
+        
+class LazyFlow():
+
+    def __init__(self, name : str):
+        self._name = name
+        self._dataflow = None
+        self._dataset = None
+        self._columns = {}
+        self._selections = {}
+        self._queries = {}
+
+    def read(self, columns: dict = None):
+        for column_name, column_spec in columns.items():
+            pass
+        pass
+
+    def define(self, columns: dict = None):
+        for column_name, column_spec in columns.items():
+            pass
+        pass
+
+    def select(self, selections: dict = None):
+        for selection_name, selection_spec in selections.items():
+            pass
+        pass
+
+    def query(self, queries: dict = None):
+        for query_name, query_spec in queries.items():
+            pass
+        pass
+    
+    def output(self, file):
+        pass
+    
+class LazyNode():
+
+    def __init__(self, action):
+        self,_action = action

@@ -82,7 +82,7 @@ if __name__ == '__main__':
 
   # df = qty.dataflow(qty.multithread.enable(args.multithread), qty.dataset.head(args.entries))
   cppyy.cppdef('''
-  dataflow df(multithread::enable({nthreads}), dataset::head({entries}), dataset::weight({weight}));
+  dataflow _df(multithread::enable({nthreads}), dataset::head({entries}), dataset::weight({weight}));
   '''.format(
     nthreads=int(args.multithread),
     entries=args.entries,
