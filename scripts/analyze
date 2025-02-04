@@ -6,7 +6,7 @@ import argparse
 import functools
 import importlib
 
-# from EventFlow import analysis
+# from xflow import analysis
 
 def parse_arguments():
   parser = argparse.ArgumentParser(description="Process some analysis parameters.")
@@ -51,11 +51,11 @@ if __name__ == '__main__':
     with open(args.config) as f:
       exec(f.read(), globals(), local_vars)
 
-    from EventFlow.analysis import configured_instance
+    from xflow.analysis import configured_instance
     ana = configured_instance
 
     if ana == None:
-      print("A configured analysis instance not found. Have you called EventFlow.analysis.configure()?")
+      print("A configured analysis instance not found. Have you called xflow.analysis.configure()?")
       sys.exit(1) 
   except Exception as e:
     print(f"Error executing script: {e}")

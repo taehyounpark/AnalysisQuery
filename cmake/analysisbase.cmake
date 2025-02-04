@@ -1,4 +1,4 @@
-project(EventFlow)
+project(xflow)
 
 find_package(
   ROOT REQUIRED
@@ -23,26 +23,26 @@ find_package(
 find_package(AnalysisBase QUIET)
 find_package(nlohmann_json REQUIRED)
 
-atlas_subdir(EventFlow)
+atlas_subdir(xflow)
 
 atlas_add_root_dictionary(
-  EventFlowLib
-  EventFlowDict
+  xflowLib
+  xflowDict
   ROOT_HEADERS
-  EventFlow/*.h
+  xflow/*.h
   Root/LinkDef.h
   EXTERNAL_PACKAGES
   ROOT
   )
 
 atlas_add_library(
-  EventFlowLib
-  EventFlow/*.h
+  xflowLib
+  xflow/*.h
   Root/*.h
   Root/*.cxx
-  ${EventFlowDict}
+  ${xflowDict}
   PUBLIC_HEADERS 
-  EventFlow
+  xflow
   LINK_LIBRARIES
   queryosity::queryosity
   nlohmann_json::nlohmann_json
